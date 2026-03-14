@@ -3069,6 +3069,7 @@
 
       const chunkWrap = makeEl("div", "chunks");
       for (const ch of learn.chunks) {
+        if (ch.en === "(Put together)") continue;
         const row = makeEl("div", "chunk");
         row.appendChild(makeEl("div", "chunkEn", ch.en));
         row.appendChild(makeEl("div", "chunkZh", ch.zh));
@@ -3097,6 +3098,7 @@
       const learn = buildAnswerLearn(item, ans, idx);
       const segs = [];
       for (const ch of learn.chunks) {
+        if (ch.en === "(Put together)") continue;
         if (ch.en) segs.push({ text: ch.en, lang: "en-US", rate: enRate });
         if (ch.zh) segs.push({ text: ch.zh, lang: "zh-CN", rate: 0.95 });
       }
