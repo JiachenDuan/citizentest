@@ -3273,6 +3273,7 @@
 
       const chunkWrap = makeEl("div", "chunks");
       for (const ch of learn.chunks) {
+        if (ch.en === "(Put together)") continue;
         const row = makeEl("div", "chunk");
         row.appendChild(makeEl("div", "chunkEn", ch.en));
         row.appendChild(makeEl("div", "chunkZh", ch.zh));
