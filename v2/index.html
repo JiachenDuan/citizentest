@@ -199,6 +199,14 @@
       font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC", "SimSun", sans-serif;
       color: #2a2a2a;
     }
+
+    .ansLearnPanel {
+      margin-top: 10px;
+    }
+    .ansLearnPanel .learnpanel {
+      margin-left: 0;
+      margin-right: 0;
+    }
     .note {
       margin: 8px 0 2px 38px;
       font-size: 14px;
@@ -2960,6 +2968,7 @@
     // v2 learning/explain state
     let expandedId = null;
     let expandedAnsKey = null; // e.g. "12-0" (questionId-answerIndex)
+    let expandedAnsLearnKey = null; // e.g. "12-0" (questionId-answerIndex)
 
     // ---------- Explain read (chunks) ----------
     const explain = {
@@ -3038,7 +3047,72 @@
       // fallback if no zh provided
       const en = (ansEn || "").trim();
       if (!en) return "";
-      return "意思是：这句话是一个可接受答案";
+      return "意思是：这是一个可接受的回答";
+    }
+
+    function buildAnswerLearn(item, ans, idx) {
+      const enA = (ans.en || "").trim();
+      const zhA = (ans.zh || "").trim();
+      const summary = zhA ? `这个答案的意思是：${cleanZh(zhA)}。` : "这个答案的意思是：一个可接受的回答。";
+
+      // Keep chunking simple and readable.
+      const chunks = [];
+      if (enA) chunks.push({ en: enA, zh: `这里指：${cleanZh(zhA) || "这句话的含义"}` });
+
+      // Add a gentle note for answers that are instructions/notes.
+      if (/answers will vary/i.test(enA)) {
+        chunks.push({ en: "Answers will vary", zh: "意思是：因人而异" });
+      }
+      if (/visit\s+\S+/i.test(enA)) {
+        chunks.push({ en: "Visit …", zh: "意思是：去网站查询" });
+      }
+
+      return { summary, chunks };
+    }
+
+    function renderAnswerLearnPanel(item, ans, idx) {
+      const learn = buildAnswerLearn(item, ans, idx);
+
+      const wrap = makeEl("div", "ansLearnPanel");
+      const panel = makeEl("div", "learnpanel");
+      wrap.appendChild(panel);
+
+      panel.appendChild(makeEl("div", "learnTitle", learn.summary));
+
+      const chunkWrap = makeEl("div", "chunks");
+      for (const ch of learn.chunks) {
+        const row = makeEl("div", "chunk");
+        row.appendChild(makeEl("div", "chunkEn", ch.en));
+        row.appendChild(makeEl("div", "chunkZh", ch.zh));
+        chunkWrap.appendChild(row);
+      }
+      panel.appendChild(chunkWrap);
+
+      const actions = makeEl("div", "learnActions");
+      const play = makeEl("button", "learnbtn", "按块朗读（英文→中文）");
+      play.dataset.action = "play-ans-chunks";
+      play.dataset.id = String(item.id);
+      play.dataset.idx = String(idx);
+      actions.appendChild(play);
+
+      const stop = makeEl("button", "learnbtn", "停止");
+      stop.dataset.action = "stop-chunks";
+      actions.appendChild(stop);
+
+      panel.appendChild(actions);
+      panel.appendChild(makeEl("div", "learnNote", "提示：先听英文，再听中文解释。"));
+
+      return wrap;
+    }
+
+    function playAnswerChunksFor(item, ans, idx) {
+      const learn = buildAnswerLearn(item, ans, idx);
+      const segs = [];
+      for (const ch of learn.chunks) {
+        if (ch.en) segs.push({ text: ch.en, lang: "en-US", rate: enRate });
+        if (ch.zh) segs.push({ text: ch.zh, lang: "zh-CN", rate: 0.95 });
+      }
+      speakQueue(segs);
     }
 
     function buildLearn(item) {
@@ -3274,6 +3348,16 @@
           top.appendChild(textWrap);
 
           const key = `${item.id}-${idx}`;
+
+          // v2: per-answer learn/explain button (same concept as question)
+          const learnBtn = makeEl("button", "ansExplainBtn", expandedAnsLearnKey === key ? "收起讲解" : "学习/讲解");
+          learnBtn.dataset.action = "toggle-ans-learn";
+          learnBtn.dataset.key = key;
+          learnBtn.dataset.id = String(item.id);
+          learnBtn.dataset.idx = String(idx);
+          top.appendChild(learnBtn);
+
+          // Keep old "答案解释" only when needed (non-simple answers)
           if (answerNeedsExplain(ans.en)) {
             const btn = makeEl("button", "ansExplainBtn", expandedAnsKey === key ? "收起解释" : "答案解释");
             btn.dataset.action = "toggle-ans";
@@ -3284,6 +3368,10 @@
           }
 
           li.appendChild(top);
+
+          if (expandedAnsLearnKey === key) {
+            li.appendChild(renderAnswerLearnPanel(item, ans, idx));
+          }
 
           if (expandedAnsKey === key && answerNeedsExplain(ans.en)) {
             const box = makeEl("div", "ansExplain");
@@ -3436,6 +3524,7 @@
           stopAutoRead();
           stopExplainRead();
           expandedAnsKey = null;
+          expandedAnsLearnKey = null;
           expandedId = expandedId === id ? null : id;
           render();
           // bring panel into view for seniors
@@ -3455,10 +3544,29 @@
           return;
         }
 
+        if (action === "toggle-ans-learn") {
+          stopAutoRead();
+          stopExplainRead();
+          const key = actionEl.dataset.key;
+          expandedAnsLearnKey = expandedAnsLearnKey === key ? null : key;
+          render();
+          return;
+        }
+
         if (action === "play-chunks" && item) {
           stopAutoRead();
           stopExplainRead();
           playChunksFor(item);
+          return;
+        }
+
+        if (action === "play-ans-chunks" && item) {
+          stopAutoRead();
+          stopExplainRead();
+          const idx = parseInt(actionEl.dataset.idx || "", 10);
+          if (!Number.isNaN(idx) && item.answers && item.answers[idx]) {
+            playAnswerChunksFor(item, item.answers[idx], idx);
+          }
           return;
         }
 
