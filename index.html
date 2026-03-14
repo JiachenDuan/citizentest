@@ -204,6 +204,28 @@
             <option value="zh">中文 only</option>
           </select>
         </label>
+
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted);">
+          English 速度：
+          <input id="enRate" type="range" min="0.6" max="1.2" step="0.05" value="0.9" />
+          <span id="enRateLabel" style="min-width:40px; text-align:right;">0.90×</span>
+        </label>
+
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted);">
+          本页连读：
+          <select id="loopCount" style="padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:#fff; font-size:14px;">
+            <option value="1" selected>1遍</option>
+            <option value="2">2遍</option>
+            <option value="3">3遍</option>
+            <option value="5">5遍</option>
+            <option value="10">10遍</option>
+            <option value="inf">无限循环</option>
+          </select>
+        </label>
+
+        <button id="playPage">Play Page</button>
+        <button id="stopPage" disabled>Stop</button>
+
         <button id="prev">Prev</button>
         <button id="next">Next</button>
       </div>
@@ -2713,13 +2735,33 @@
     const pager = document.getElementById("pager");
     const prevBtn = document.getElementById("prev");
     const nextBtn = document.getElementById("next");
+
     const readModeSel = document.getElementById("readMode");
+    const enRateEl = document.getElementById("enRate");
+    const enRateLabel = document.getElementById("enRateLabel");
+    const loopCountEl = document.getElementById("loopCount");
+    const playPageBtn = document.getElementById("playPage");
+    const stopPageBtn = document.getElementById("stopPage");
 
     let readMode = "both"; // 'en' | 'both' | 'zh'
     if (readModeSel) {
       readMode = readModeSel.value;
       readModeSel.addEventListener("change", () => {
         readMode = readModeSel.value;
+        stopAutoRead();
+      });
+    }
+
+    let enRate = 0.9;
+    function updateEnRateLabel() {
+      if (enRateLabel) enRateLabel.textContent = `${enRate.toFixed(2)}×`;
+    }
+    if (enRateEl) {
+      enRate = parseFloat(enRateEl.value) || 0.9;
+      updateEnRateLabel();
+      enRateEl.addEventListener("input", () => {
+        enRate = parseFloat(enRateEl.value) || 0.9;
+        updateEnRateLabel();
       });
     }
 
@@ -2768,7 +2810,7 @@
         if (!t) return;
         const u = new SpeechSynthesisUtterance(t);
         u.lang = zhText ? "zh-CN" : "en-US";
-        u.rate = 0.9;
+        u.rate = zhText ? 0.9 : enRate;
         synth.speak(u);
         return;
       }
@@ -2777,7 +2819,7 @@
         if (!enText) return;
         const u = new SpeechSynthesisUtterance(enText);
         u.lang = "en-US";
-        u.rate = 0.9;
+        u.rate = enRate;
         synth.speak(u);
         return;
       }
@@ -2787,7 +2829,7 @@
       if (enText) {
         const u1 = new SpeechSynthesisUtterance(enText);
         u1.lang = "en-US";
-        u1.rate = 0.9;
+        u1.rate = enRate;
         synth.speak(u1);
       }
       if (zhText) {
@@ -2805,11 +2847,17 @@
       return el;
     }
 
+    function getCurrentPageItems() {
+      const start = (page - 1) * ITEMS_PER_PAGE;
+      return DATA.slice(start, start + ITEMS_PER_PAGE);
+    }
+
     function render() {
+      stopAutoRead();
+
       list.innerHTML = "";
       const totalPages = Math.ceil(DATA.length / ITEMS_PER_PAGE);
-      const start = (page - 1) * ITEMS_PER_PAGE;
-      const items = DATA.slice(start, start + ITEMS_PER_PAGE);
+      const items = getCurrentPageItems();
 
       pager.textContent = `Page ${page} / ${totalPages}`;
       prevBtn.disabled = page === 1;
@@ -2871,7 +2919,126 @@
       }
     }
 
+    // ---------- Auto-read (page) ----------
+    const auto = {
+      active: false,
+      segments: [],
+      idx: 0,
+      loopsLeft: 1, // number | Infinity
+    };
+
+    function setAutoUI(active) {
+      if (playPageBtn) playPageBtn.disabled = active;
+      if (stopPageBtn) stopPageBtn.disabled = !active;
+      if (readModeSel) readModeSel.disabled = active;
+      if (loopCountEl) loopCountEl.disabled = active;
+      // allow changing speed while reading
+    }
+
+    function makeSegmentsForText(en, zh) {
+      const enText = (en || "").trim();
+      const zhText = (zh || "").trim();
+      const segs = [];
+
+      if (readMode === "en") {
+        if (enText) segs.push({ text: enText, lang: "en-US", rate: enRate });
+        return segs;
+      }
+
+      if (readMode === "zh") {
+        const t = zhText || enText;
+        if (t) segs.push({ text: t, lang: zhText ? "zh-CN" : "en-US", rate: zhText ? 0.9 : enRate });
+        return segs;
+      }
+
+      // both
+      if (enText) segs.push({ text: enText, lang: "en-US", rate: enRate });
+      if (zhText) segs.push({ text: zhText, lang: "zh-CN", rate: 0.9 });
+      return segs;
+    }
+
+    function buildPageSegments(items) {
+      const segs = [];
+      for (const item of items) {
+        segs.push(...makeSegmentsForText(item.q, item.q_zh));
+        for (const ans of item.answers) {
+          segs.push(...makeSegmentsForText(ans.en, ans.zh));
+        }
+        if (item.note_en || item.note_zh) {
+          segs.push(...makeSegmentsForText(item.note_en, item.note_zh));
+        }
+      }
+      return segs;
+    }
+
+    function speakSegment(seg, onDone) {
+      if (!window.speechSynthesis) return;
+      const u = new SpeechSynthesisUtterance(seg.text);
+      u.lang = seg.lang;
+      u.rate = seg.rate;
+      u.onend = () => onDone && onDone();
+      u.onerror = () => onDone && onDone();
+      window.speechSynthesis.speak(u);
+    }
+
+    function stepAutoRead() {
+      if (!auto.active) return;
+      if (!window.speechSynthesis) return;
+
+      if (auto.idx >= auto.segments.length) {
+        auto.loopsLeft = auto.loopsLeft === Infinity ? Infinity : auto.loopsLeft - 1;
+        if (auto.loopsLeft <= 0) {
+          stopAutoRead();
+          return;
+        }
+        auto.idx = 0;
+      }
+
+      const seg = auto.segments[auto.idx++];
+      if (!seg || !seg.text) {
+        stepAutoRead();
+        return;
+      }
+      speakSegment(seg, () => stepAutoRead());
+    }
+
+    function startAutoRead() {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+
+      const items = getCurrentPageItems();
+      auto.segments = buildPageSegments(items);
+      auto.idx = 0;
+
+      const lc = loopCountEl ? loopCountEl.value : "1";
+      auto.loopsLeft = lc === "inf" ? Infinity : Math.max(1, parseInt(lc, 10) || 1);
+
+      auto.active = true;
+      setAutoUI(true);
+      stepAutoRead();
+    }
+
+    function stopAutoRead() {
+      if (!auto.active && window.speechSynthesis) {
+        // still stop any leftover speech
+        window.speechSynthesis.cancel();
+        setAutoUI(false);
+        return;
+      }
+      auto.active = false;
+      auto.segments = [];
+      auto.idx = 0;
+      auto.loopsLeft = 1;
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      setAutoUI(false);
+    }
+
+    if (playPageBtn) playPageBtn.addEventListener("click", () => startAutoRead());
+    if (stopPageBtn) stopPageBtn.addEventListener("click", () => stopAutoRead());
+
+    // Click-to-speak (single item)
     list.addEventListener("click", (e) => {
+      stopAutoRead();
       const target = e.target.closest("[data-en]");
       if (!target) return;
       speak(target.dataset.en, target.dataset.zh);
