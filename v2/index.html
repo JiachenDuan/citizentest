@@ -164,6 +164,41 @@
       border-radius: 10px;
       cursor: pointer;
     }
+    .ansTop {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .ansText { flex: 1; }
+    .ansExplainBtn {
+      white-space: nowrap;
+      padding: 8px 10px;
+      font-size: 14px;
+      border-radius: 10px;
+      border: 1px solid #ead1b8;
+      background: #fff6e9;
+      box-shadow: none;
+    }
+    .ansExplain {
+      margin-top: 8px;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid #ead1b8;
+      background: #fff6e9;
+    }
+    .ansExplainTitle {
+      font-size: 14px;
+      font-weight: 800;
+      margin: 0 0 6px;
+      color: #3b2f24;
+    }
+    .ansExplainZh {
+      font-size: 18px;
+      line-height: 1.55;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC", "SimSun", sans-serif;
+      color: #2a2a2a;
+    }
     .note {
       margin: 8px 0 2px 38px;
       font-size: 14px;
@@ -2924,6 +2959,7 @@
 
     // v2 learning/explain state
     let expandedId = null;
+    let expandedAnsKey = null; // e.g. "12-0" (questionId-answerIndex)
 
     // ---------- Explain read (chunks) ----------
     const explain = {
@@ -2982,6 +3018,27 @@
         }
       }
       return out;
+    }
+
+    function answerNeedsExplain(en) {
+      const t = (en || "").trim();
+      if (!t) return false;
+      // Simple = single word/number-ish (incl. hyphen) like "Republic", "Twenty-seven (27)" is NOT simple.
+      if (/^[A-Za-z0-9-]+$/.test(t)) return false;
+      // If it has parentheses, brackets, or looks like a sentence, show explain.
+      if (/[()\[\].,:;!?“”"]/.test(t)) return true;
+      // If more than 2 words, show explain.
+      const words = t.split(/\s+/).filter(Boolean);
+      return words.length > 2;
+    }
+
+    function buildAnswerExplainZh(ansZh, ansEn) {
+      const zh = cleanZh(ansZh);
+      if (zh) return `意思是：${zh}`;
+      // fallback if no zh provided
+      const en = (ansEn || "").trim();
+      if (!en) return "";
+      return "意思是：这句话是一个可接受答案";
     }
 
     function buildLearn(item) {
@@ -3205,14 +3262,38 @@
         }
 
         const answers = makeEl("ul", "answers");
-        for (const ans of item.answers) {
+        item.answers.forEach((ans, idx) => {
           const li = makeEl("li");
           li.dataset.en = ans.en;
           li.dataset.zh = ans.zh;
-          li.appendChild(makeEl("div", "en", ans.en));
-          li.appendChild(makeEl("div", "zh", ans.zh));
+
+          const top = makeEl("div", "ansTop");
+          const textWrap = makeEl("div", "ansText");
+          textWrap.appendChild(makeEl("div", "en", ans.en));
+          textWrap.appendChild(makeEl("div", "zh", ans.zh));
+          top.appendChild(textWrap);
+
+          const key = `${item.id}-${idx}`;
+          if (answerNeedsExplain(ans.en)) {
+            const btn = makeEl("button", "ansExplainBtn", expandedAnsKey === key ? "收起解释" : "答案解释");
+            btn.dataset.action = "toggle-ans";
+            btn.dataset.key = key;
+            btn.dataset.id = String(item.id);
+            btn.dataset.idx = String(idx);
+            top.appendChild(btn);
+          }
+
+          li.appendChild(top);
+
+          if (expandedAnsKey === key && answerNeedsExplain(ans.en)) {
+            const box = makeEl("div", "ansExplain");
+            box.appendChild(makeEl("div", "ansExplainTitle", "答案解释"));
+            box.appendChild(makeEl("div", "ansExplainZh", buildAnswerExplainZh(ans.zh, ans.en)));
+            li.appendChild(box);
+          }
+
           answers.appendChild(li);
-        }
+        });
         card.appendChild(answers);
 
         if (item.note_en || item.note_zh) {
@@ -3354,6 +3435,7 @@
         if (action === "toggle-learn") {
           stopAutoRead();
           stopExplainRead();
+          expandedAnsKey = null;
           expandedId = expandedId === id ? null : id;
           render();
           // bring panel into view for seniors
@@ -3361,6 +3443,15 @@
             const panel = list.querySelector(`[data-learn-panel='${id}']`);
             if (panel) panel.scrollIntoView({ behavior: "smooth", block: "center" });
           }, 0);
+          return;
+        }
+
+        if (action === "toggle-ans") {
+          stopAutoRead();
+          stopExplainRead();
+          const key = actionEl.dataset.key;
+          expandedAnsKey = expandedAnsKey === key ? null : key;
+          render();
           return;
         }
 
