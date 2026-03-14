@@ -3093,11 +3093,7 @@
         ];
       }
 
-      // Ensure 3–6 chunks: if too few, add an extra guidance chunk.
-      if (chunks.length === 2) {
-        chunks.push({ en: "(Focus)", zh: "重点：抓住关键词" });
-      }
-
+      // Keep it simple: fewer chunks are better than filler.
       return { summary, chunks };
     }
 
