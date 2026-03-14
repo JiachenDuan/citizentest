@@ -3055,40 +3055,47 @@
 
       const chunks = [];
 
-      // Special cases: these are not "content" answers, they are instructions.
+      // 1) Special cases: these are not "content" answers, they are instructions.
       if (/answers will vary/i.test(enA)) {
-        chunks.push({ en: "Answers will vary", zh: "意思是：因人而异" });
+        chunks.push({ en: "Answers will vary", zh: "这是在说：因人而异（没有标准答案）" });
+        chunks.push({ en: "(Put together)", zh: "所以：面试时按自己的情况回答" });
         return { summary, chunks };
       }
 
       const visit = enA.match(/\bvisit\s+(\S+)/i);
       if (visit) {
-        chunks.push({ en: `Visit ${visit[1]}`, zh: "意思是：去这个网站查询" });
+        chunks.push({ en: `Visit ${visit[1]}`, zh: "这是在说：去这个网站查询" });
         const forName = enA.match(/for the name of (.+)$/i);
         if (forName) {
-          chunks.push({ en: `for the name of ${forName[1]}`.replace(/\.$/, ""), zh: "意思是：查“谁/哪个”的名字" });
+          chunks.push({ en: `for the name of ${forName[1]}`.replace(/\.$/, ""), zh: "目的：查“谁/哪个”的名字" });
         }
+        chunks.push({ en: "(Put together)", zh: "所以：这题不要求你背人名" });
         return { summary, chunks };
       }
 
+      // 2) Role-based chunking (like questions): keyword + qualifier + stitch back.
       const { head: zhHead, rest: zhRest } = splitZhParts(zhA);
       const { head: enHead, rest: enRest } = splitEnAnswer(enA);
 
       if (enHead) {
         chunks.push({
           en: enHead,
-          zh: zhHead ? `关键词：${shortenZh(zhHead, 14)}` : "关键词：记住这句核心说法",
+          zh: zhHead ? `关键词：${shortenZh(zhHead, 14)}` : "关键词：这是核心说法",
         });
       }
+
       if (enRest) {
         chunks.push({
           en: enRest,
-          zh: zhRest ? `补充说明：${shortenZh(zhRest, 18)}` : "补充说明：可能是限定/说明",
+          zh: zhRest ? `补充/限定：${shortenZh(zhRest, 18)}` : "补充/限定：补充说明",
         });
       }
-      // If we still have no zh, keep a gentle hint (not a full copy).
-      if (!zhA && enA) {
-        chunks.push({ en: "(Tip)", zh: "提示：先整体记住，再慢慢拆词" });
+
+      // 3) Stitching hint: help seniors map English -> meaning.
+      if (zhA) {
+        chunks.push({ en: "(Put together)", zh: `所以这句话是在说：${shortenZh(zhA, 26)}` });
+      } else if (enA) {
+        chunks.push({ en: "(Put together)", zh: "所以：记住这句英文即可" });
       }
 
       return { summary, chunks };
