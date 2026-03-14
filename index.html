@@ -1,0 +1,2852 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>US Civics 128 Q&A (English + 中文)</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f1ea;
+      --ink: #1f1a14;
+      --muted: #6b5f52;
+      --card: #fffaf2;
+      --accent: #b24a2b;
+      --accent-2: #2b6e8f;
+      --border: #e6dacb;
+      --shadow: 0 10px 30px rgba(34, 20, 6, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Georgia", "Palatino", "Times New Roman", serif;
+      background:
+        radial-gradient(1200px 600px at 20% -10%, #fff6df 0%, transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, #f9e9d6 0%, transparent 55%),
+        linear-gradient(180deg, #f7f2e9 0%, #efe6da 100%);
+      color: var(--ink);
+    }
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 20px 48px;
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 16px 18px 22px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 0.4px;
+    }
+    .subtitle {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 18px 0 8px;
+      flex-wrap: wrap;
+    }
+    .pager {
+      font-size: 16px;
+      color: var(--muted);
+    }
+    .btns {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    button {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+      box-shadow: 0 6px 16px rgba(25, 18, 8, 0.08);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    button:not(:disabled):active {
+      transform: translateY(1px);
+      box-shadow: 0 3px 10px rgba(25, 18, 8, 0.08);
+    }
+    .section {
+      margin: 22px 0 6px;
+      padding: 10px 14px;
+      background: #f1e6d7;
+      border-left: 6px solid var(--accent);
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .subsection {
+      margin: 8px 0 12px;
+      padding: 8px 12px;
+      background: #f7efe4;
+      border-left: 6px solid var(--accent-2);
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 16px 12px;
+      margin: 12px 0;
+      box-shadow: var(--shadow);
+    }
+    .question {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .num {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+      min-width: 38px;
+    }
+    .qtext {
+      flex: 1;
+      cursor: pointer;
+    }
+    .en {
+      font-size: 20px;
+      line-height: 1.45;
+    }
+    .zh {
+      margin-top: 4px;
+      font-size: 19px;
+      line-height: 1.55;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC", "SimSun", sans-serif;
+      color: #2a2a2a;
+    }
+    .badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 3px 8px;
+      font-size: 12px;
+      color: #fff;
+      background: var(--accent);
+      border-radius: 999px;
+      vertical-align: middle;
+    }
+    .answers {
+      margin: 12px 0 2px 38px;
+      padding: 0;
+      list-style: none;
+    }
+    .answers li {
+      padding: 8px 10px;
+      margin: 6px 0;
+      background: #fff;
+      border: 1px solid #efe2d2;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .note {
+      margin: 8px 0 2px 38px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .hint {
+      margin-top: 6px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    @media (max-width: 720px) {
+      .app { padding: 20px 14px 40px; }
+      h1 { font-size: 24px; }
+      .en { font-size: 18px; }
+      .zh { font-size: 18px; }
+      .num { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>US Civics 128 Q&A</h1>
+      <div class="subtitle">English + 中文翻译。点击问题或答案即可朗读（英文 → 中文）。每页10题，共13页。</div>
+      <div class="hint">提示：标有 * 的为 65/20 特别题。</div>
+    </header>
+
+    <div class="controls">
+      <div class="pager" id="pager"></div>
+      <div class="btns">
+        <button id="prev">Prev</button>
+        <button id="next">Next</button>
+      </div>
+    </div>
+
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const STAR_IDS = new Set([2, 7, 12, 20, 30, 36, 38, 39, 44, 52, 61, 66, 74, 78, 86, 94, 113, 115, 121, 126]);
+
+    const EN_DATA = [
+      {
+        id: 1,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "What is the form of government of the United States?",
+        a: [
+          "Republic",
+          "Constitution-based federal republic",
+          "Representative democracy",
+        ],
+      },
+      {
+        id: 2,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "What is the supreme law of the land?",
+        a: [
+          "(U.S.) Constitution",
+        ],
+      },
+      {
+        id: 3,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "Name one thing the U.S. Constitution does.",
+        a: [
+          "Forms the government",
+          "Defines powers of government",
+          "Defines the parts of government",
+          "Protects the rights of the people",
+        ],
+      },
+      {
+        id: 4,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "The U.S. Constitution starts with the words “We the People.” What does “We the People” mean?",
+        a: [
+          "Self-government",
+          "Popular sovereignty",
+          "Consent of the governed",
+          "People should govern themselves",
+          "(Example of) social contract",
+        ],
+      },
+      {
+        id: 5,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "How are changes made to the U.S. Constitution?",
+        a: [
+          "Amendments",
+          "The amendment process",
+        ],
+      },
+      {
+        id: 6,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "What does the Bill of Rights protect?",
+        a: [
+          "(The basic) rights of Americans",
+          "(The basic) rights of people living in the United States",
+        ],
+      },
+      {
+        id: 7,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "How many amendments does the U.S. Constitution have?",
+        a: [
+          "Twenty-seven (27)",
+        ],
+      },
+      {
+        id: 8,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "Why is the Declaration of Independence important?",
+        a: [
+          "It says America is free from British control.",
+          "It says all people are created equal.",
+          "It identifies inherent rights.",
+          "It identifies individual freedoms.",
+        ],
+      },
+      {
+        id: 9,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "What founding document said the American colonies were free from Britain?",
+        a: [
+          "Declaration of Independence",
+        ],
+      },
+      {
+        id: 10,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "Name two important ideas from the Declaration of Independence and the U.S. Constitution.",
+        a: [
+          "Equality",
+          "Liberty",
+          "Social contract",
+          "Natural rights",
+          "Limited government",
+          "Self-government",
+        ],
+      },
+      {
+        id: 11,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "The words “Life, Liberty, and the pursuit of Happiness” are in what founding document?",
+        a: [
+          "Declaration of Independence",
+        ],
+      },
+      {
+        id: 12,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "What is the economic system of the United States?",
+        a: [
+          "Capitalism",
+          "Free market economy",
+        ],
+      },
+      {
+        id: 13,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "What is the rule of law?",
+        a: [
+          "Everyone must follow the law.",
+          "Leaders must obey the law.",
+          "Government must obey the law.",
+          "No one is above the law.",
+        ],
+      },
+      {
+        id: 14,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "Many documents influenced the U.S. Constitution. Name one.",
+        a: [
+          "Declaration of Independence",
+          "Articles of Confederation",
+          "Federalist Papers",
+          "Anti-Federalist Papers",
+          "Virginia Declaration of Rights",
+          "Fundamental Orders of Connecticut",
+          "Mayflower Compact",
+          "Iroquois Great Law of Peace",
+        ],
+      },
+      {
+        id: 15,
+        section: "American Government",
+        subsection: "Principles of American Government",
+        q: "There are three branches of government. Why?",
+        a: [
+          "So one part does not become too powerful",
+          "Checks and balances",
+          "Separation of powers",
+        ],
+      },
+      {
+        id: 16,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Name the three branches of government.",
+        a: [
+          "Legislative, executive, and judicial",
+          "Congress, president, and the courts",
+        ],
+      },
+      {
+        id: 17,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "The President of the United States is in charge of which branch of government?",
+        a: [
+          "Executive branch",
+        ],
+      },
+      {
+        id: 18,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What part of the federal government writes laws?",
+        a: [
+          "(U.S.) Congress",
+          "(U.S. or national) legislature",
+          "Legislative branch",
+        ],
+      },
+      {
+        id: 19,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What are the two parts of the U.S. Congress?",
+        a: [
+          "Senate and House (of Representatives)",
+        ],
+      },
+      {
+        id: 20,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Name one power of the U.S. Congress.",
+        a: [
+          "Writes laws",
+          "Declares war",
+          "Makes the federal budget",
+        ],
+      },
+      {
+        id: 21,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "How many U.S. senators are there?",
+        a: [
+          "One hundred (100)",
+        ],
+      },
+      {
+        id: 22,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "How long is a term for a U.S. senator?",
+        a: [
+          "Six (6) years",
+        ],
+      },
+      {
+        id: 23,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who is one of your state’s U.S. senators now?",
+        a: [
+          "Answers will vary. [District of Columbia residents and residents of U.S. territories should answer that D.C. (or the territory where the applicant lives) has no U.S. senators.]",
+        ],
+      },
+      {
+        id: 24,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "How many voting members are in the House of Representatives?",
+        a: [
+          "Four hundred thirty-five (435)",
+        ],
+      },
+      {
+        id: 25,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "How long is a term for a member of the House of Representatives?",
+        a: [
+          "Two (2) years",
+        ],
+      },
+      {
+        id: 26,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Why do U.S. representatives serve shorter terms than U.S. senators?",
+        a: [
+          "To more closely follow public opinion",
+        ],
+      },
+      {
+        id: 27,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "How many senators does each state have?",
+        a: [
+          "Two (2)",
+        ],
+      },
+      {
+        id: 28,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Why does each state have two senators?",
+        a: [
+          "Equal representation (for small states)",
+          "The Great Compromise (Connecticut Compromise)",
+        ],
+      },
+      {
+        id: 29,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Name your U.S. representative.",
+        a: [
+          "Answers will vary. [Residents of territories with nonvoting Delegates or Resident Commissioners may provide the name of that Delegate or Commissioner. Also acceptable is any statement that the territory has no (voting) representatives in Congress.]",
+        ],
+      },
+      {
+        id: 30,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What is the name of the Speaker of the House of Representatives now?",
+        a: [
+          "Visit uscis.gov/citizenship/testupdates for the name of the Speaker of the House of Representatives.",
+        ],
+      },
+      {
+        id: 31,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who does a U.S. senator represent?",
+        a: [
+          "Citizens of their state",
+          "People of their state",
+        ],
+      },
+      {
+        id: 32,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who elects U.S. senators?",
+        a: [
+          "Citizens from their state",
+        ],
+      },
+      {
+        id: 33,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who does a member of the House of Representatives represent?",
+        a: [
+          "Citizens in their (congressional) district",
+          "Citizens in their district",
+          "People from their (congressional) district",
+          "People in their district",
+        ],
+      },
+      {
+        id: 34,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who elects members of the House of Representatives?",
+        a: [
+          "Citizens from their (congressional) district",
+        ],
+      },
+      {
+        id: 35,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Some states have more representatives than other states. Why?",
+        a: [
+          "(Because of) the state’s population",
+          "(Because) they have more people",
+          "(Because) some states have more people",
+        ],
+      },
+      {
+        id: 36,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "The President of the United States is elected for how many years?",
+        a: [
+          "Four (4) years",
+        ],
+      },
+      {
+        id: 37,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "The President of the United States can serve only two terms. Why?",
+        a: [
+          "(Because of) the 22nd Amendment",
+          "To keep the president from becoming too powerful",
+        ],
+      },
+      {
+        id: 38,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What is the name of the President of the United States now?",
+        a: [
+          "Visit uscis.gov/citizenship/testupdates for the name of the President of the United States.",
+        ],
+      },
+      {
+        id: 39,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What is the name of the Vice President of the United States now?",
+        a: [
+          "Visit uscis.gov/citizenship/testupdates for the name of the Vice President of the United States.",
+        ],
+      },
+      {
+        id: 40,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "If the president can no longer serve, who becomes president?",
+        a: [
+          "The Vice President (of the United States)",
+        ],
+      },
+      {
+        id: 41,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Name one power of the president.",
+        a: [
+          "Signs bills into law",
+          "Vetoes bills",
+          "Enforces laws",
+          "Commander in Chief (of the military)",
+          "Chief diplomat",
+          "Appoints federal judges",
+        ],
+      },
+      {
+        id: 42,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who is Commander in Chief of the U.S. military?",
+        a: [
+          "The President (of the United States)",
+        ],
+      },
+      {
+        id: 43,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who signs bills to become laws?",
+        a: [
+          "The President (of the United States)",
+        ],
+      },
+      {
+        id: 44,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who vetoes bills?",
+        a: [
+          "The President (of the United States)",
+        ],
+      },
+      {
+        id: 45,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who appoints federal judges?",
+        a: [
+          "The President (of the United States)",
+        ],
+      },
+      {
+        id: 46,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "The executive branch has many parts. Name one.",
+        a: [
+          "President (of the United States)",
+          "Cabinet",
+          "Federal departments and agencies",
+        ],
+      },
+      {
+        id: 47,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What does the President’s Cabinet do?",
+        a: [
+          "Advises the President (of the United States)",
+        ],
+      },
+      {
+        id: 48,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What are two Cabinet-level positions?",
+        a: [
+          "Attorney General",
+          "Secretary of Agriculture",
+          "Secretary of Commerce",
+          "Secretary of Education",
+          "Secretary of Energy",
+          "Secretary of Health and Human Services",
+          "Secretary of Homeland Security",
+          "Secretary of Housing and Urban Development",
+          "Secretary of the Interior",
+          "Secretary of Labor",
+          "Secretary of State",
+          "Secretary of Transportation",
+          "Secretary of the Treasury",
+          "Secretary of Veterans Affairs",
+          "Secretary of War (Defense)",
+          "Vice-President",
+          "Administrator of the Environmental Protection Agency",
+          "Administrator of the Small Business Administration",
+          "Director of the Central Intelligence Agency",
+          "Director of the Office of Management and Budget",
+          "Director of National Intelligence",
+          "United States Trade Representative",
+        ],
+      },
+      {
+        id: 49,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Why is the Electoral College important?",
+        a: [
+          "It decides who is elected president.",
+          "It provides a compromise between the popular election of the president and congressional selection.",
+        ],
+      },
+      {
+        id: 50,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What is one part of the judicial branch?",
+        a: [
+          "Supreme Court",
+          "Federal Courts",
+        ],
+      },
+      {
+        id: 51,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What does the judicial branch do?",
+        a: [
+          "Reviews laws",
+          "Explains laws",
+          "Resolves disputes (disagreements) about the law",
+          "Decides if a law goes against the (U.S.) Constitution",
+        ],
+      },
+      {
+        id: 52,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What is the highest court in the United States?",
+        a: [
+          "Supreme Court",
+        ],
+      },
+      {
+        id: 53,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "How many seats are on the Supreme Court?",
+        a: [
+          "Nine (9)",
+        ],
+      },
+      {
+        id: 54,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "How many Supreme Court justices are usually needed to decide a case?",
+        a: [
+          "Five (5)",
+        ],
+      },
+      {
+        id: 55,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "How long do Supreme Court justices serve?",
+        a: [
+          "(For) life",
+          "Lifetime appointment",
+          "(Until) retirement",
+        ],
+      },
+      {
+        id: 56,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Supreme Court justices serve for life. Why?",
+        a: [
+          "To be independent (of politics)",
+          "To limit outside (political) influence",
+        ],
+      },
+      {
+        id: 57,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who is the Chief Justice of the United States now?",
+        a: [
+          "Visit uscis.gov/citizenship/testupdates for the name of the Chief Justice of the United States.",
+        ],
+      },
+      {
+        id: 58,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Name one power that is only for the federal government.",
+        a: [
+          "Print paper money",
+          "Mint coins",
+          "Declare war",
+          "Create an army",
+          "Make treaties",
+          "Set foreign policy",
+        ],
+      },
+      {
+        id: 59,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Name one power that is only for the states.",
+        a: [
+          "Provide schooling and education",
+          "Provide protection (police)",
+          "Provide safety (fire departments)",
+          "Give a driver’s license",
+          "Approve zoning and land use",
+        ],
+      },
+      {
+        id: 60,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What is the purpose of the 10th Amendment?",
+        a: [
+          "(It states that the) powers not given to the federal government belong to the states or to the people.",
+        ],
+      },
+      {
+        id: 61,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "Who is the governor of your state now?",
+        a: [
+          "Answers will vary. [District of Columbia residents should answer that D.C. does not have a governor.]",
+        ],
+      },
+      {
+        id: 62,
+        section: "American Government",
+        subsection: "System of Government",
+        q: "What is the capital of your state?",
+        a: [
+          "Answers will vary. [District of Columbia residents should answer that D.C. is not a state and does not have a capital. Residents of U.S. territories should name the capital of the territory.]",
+        ],
+      },
+      {
+        id: 63,
+        section: "American Government",
+        subsection: "Rights and Responsibilities",
+        q: "There are four amendments to the U.S. Constitution about who can vote. Describe one of them.",
+        a: [
+          "Citizens eighteen (18) and older (can vote).",
+          "You don’t have to pay (a poll tax) to vote.",
+          "Any citizen can vote. (Women and men can vote.)",
+          "A male citizen of any race (can vote).",
+        ],
+      },
+      {
+        id: 64,
+        section: "American Government",
+        subsection: "Rights and Responsibilities",
+        q: "Who can vote in federal elections, run for federal office, and serve on a jury in the United States?",
+        a: [
+          "Citizens",
+          "Citizens of the United States",
+          "U.S. citizens",
+        ],
+      },
+      {
+        id: 65,
+        section: "American Government",
+        subsection: "Rights and Responsibilities",
+        q: "What are three rights of everyone living in the United States?",
+        a: [
+          "Freedom of expression",
+          "Freedom of speech",
+          "Freedom of assembly",
+          "Freedom to petition the government",
+          "Freedom of religion",
+          "The right to bear arms",
+        ],
+      },
+      {
+        id: 66,
+        section: "American Government",
+        subsection: "Rights and Responsibilities",
+        q: "What do we show loyalty to when we say the Pledge of Allegiance?",
+        a: [
+          "The United States",
+          "The flag",
+        ],
+      },
+      {
+        id: 67,
+        section: "American Government",
+        subsection: "Rights and Responsibilities",
+        q: "Name two promises that new citizens make in the Oath of Allegiance.",
+        a: [
+          "Give up loyalty to other countries",
+          "Defend the (U.S.) Constitution",
+          "Obey the laws of the United States",
+          "Serve in the military (if needed)",
+          "Serve (help, do important work for) the nation (if needed)",
+          "Be loyal to the United States",
+        ],
+      },
+      {
+        id: 68,
+        section: "American Government",
+        subsection: "Rights and Responsibilities",
+        q: "How can people become United States citizens?",
+        a: [
+          "Be born in the United States, under the conditions set by the 14th Amendment",
+          "Naturalize",
+          "Derive citizenship (under conditions set by Congress)",
+        ],
+      },
+      {
+        id: 69,
+        section: "American Government",
+        subsection: "Rights and Responsibilities",
+        q: "What are two examples of civic participation in the United States?",
+        a: [
+          "Vote",
+          "Run for office",
+          "Join a political party",
+          "Help with a campaign",
+          "Join a civic group",
+          "Join a community group",
+          "Give an elected official your opinion (on an issue)",
+          "Contact elected officials",
+          "Support or oppose an issue or policy",
+          "Write to a newspaper",
+        ],
+      },
+      {
+        id: 70,
+        section: "American Government",
+        subsection: "Rights and Responsibilities",
+        q: "What is one way Americans can serve their country?",
+        a: [
+          "Vote",
+          "Pay taxes",
+          "Obey the law",
+          "Serve in the military",
+          "Run for office",
+          "Work for local, state, or federal government",
+        ],
+      },
+      {
+        id: 71,
+        section: "American Government",
+        subsection: "Rights and Responsibilities",
+        q: "Why is it important to pay federal taxes?",
+        a: [
+          "Required by law",
+          "All people pay to fund the federal government",
+          "Required by the (U.S.) Constitution (16th Amendment)",
+          "Civic duty",
+        ],
+      },
+      {
+        id: 72,
+        section: "American Government",
+        subsection: "Rights and Responsibilities",
+        q: "It is important for all men age 18 through 25 to register for the Selective Service. Name one reason why.",
+        a: [
+          "Required by law",
+          "Civic duty",
+          "Makes the draft fair, if needed",
+        ],
+      },
+      {
+        id: 73,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "The colonists came to America for many reasons. Name one.",
+        a: [
+          "Freedom",
+          "Political liberty",
+          "Religious freedom",
+          "Economic opportunity",
+          "Escape persecution",
+        ],
+      },
+      {
+        id: 74,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "Who lived in America before the Europeans arrived?",
+        a: [
+          "American Indians",
+          "Native Americans",
+        ],
+      },
+      {
+        id: 75,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "What group of people was taken and sold as slaves?",
+        a: [
+          "Africans",
+          "People from Africa",
+        ],
+      },
+      {
+        id: 76,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "What war did the Americans fight to win independence from Britain?",
+        a: [
+          "American Revolution",
+          "The (American) Revolutionary War",
+          "War for (American) Independence",
+        ],
+      },
+      {
+        id: 77,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "Name one reason why the Americans declared independence from Britain.",
+        a: [
+          "High taxes",
+          "Taxation without representation",
+          "British soldiers stayed in Americans’ houses (boarding, quartering)",
+          "They did not have self-government",
+          "Boston Massacre",
+          "Boston Tea Party (Tea Act)",
+          "Stamp Act",
+          "Sugar Act",
+          "Townshend Acts",
+          "Intolerable (Coercive) Acts",
+        ],
+      },
+      {
+        id: 78,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "Who wrote the Declaration of Independence?",
+        a: [
+          "(Thomas) Jefferson",
+        ],
+      },
+      {
+        id: 79,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "When was the Declaration of Independence adopted?",
+        a: [
+          "July 4, 1776",
+        ],
+      },
+      {
+        id: 80,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "The American Revolution had many important events. Name one.",
+        a: [
+          "(Battle of) Bunker Hill",
+          "Declaration of Independence",
+          "Washington Crossing the Delaware (Battle of Trenton)",
+          "(Battle of) Saratoga",
+          "Valley Forge (Encampment)",
+          "(Battle of) Yorktown (British surrender at Yorktown)",
+        ],
+      },
+      {
+        id: 81,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "There were 13 original states. Name five.",
+        a: [
+          "New Hampshire",
+          "Massachusetts",
+          "Rhode Island",
+          "Connecticut",
+          "New York",
+          "New Jersey",
+          "Pennsylvania",
+          "Delaware",
+          "Maryland",
+          "Virginia",
+          "North Carolina",
+          "South Carolina",
+          "Georgia",
+        ],
+      },
+      {
+        id: 82,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "What founding document was written in 1787?",
+        a: [
+          "(U.S.) Constitution",
+        ],
+      },
+      {
+        id: 83,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "The Federalist Papers supported the passage of the U.S. Constitution. Name one of the writers.",
+        a: [
+          "(James) Madison",
+          "(Alexander) Hamilton",
+          "(John) Jay",
+          "Publius",
+        ],
+      },
+      {
+        id: 84,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "Why were the Federalist Papers important?",
+        a: [
+          "They helped people understand the (U.S.) Constitution.",
+          "They supported passing the (U.S.) Constitution.",
+        ],
+      },
+      {
+        id: 85,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "Benjamin Franklin is famous for many things. Name one.",
+        a: [
+          "Founded the first free public libraries",
+          "First Postmaster General of the United States",
+          "Helped write the Declaration of Independence",
+          "Inventor",
+          "U.S. diplomat",
+        ],
+      },
+      {
+        id: 86,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "George Washington is famous for many things. Name one.",
+        a: [
+          "“Father of Our Country”",
+          "First president of the United States",
+          "General of the Continental Army",
+          "President of the Constitutional Convention",
+        ],
+      },
+      {
+        id: 87,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "Thomas Jefferson is famous for many things. Name one.",
+        a: [
+          "Writer of the Declaration of Independence",
+          "Third president of the United States",
+          "Doubled the size of the United States (Louisiana Purchase)",
+          "First Secretary of State",
+          "Founded the University of Virginia",
+          "Writer of the Virginia Statute on Religious Freedom",
+        ],
+      },
+      {
+        id: 88,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "James Madison is famous for many things. Name one.",
+        a: [
+          "“Father of the Constitution”",
+          "Fourth president of the United States",
+          "President during the War of 1812",
+          "One of the writers of the Federalist Papers",
+        ],
+      },
+      {
+        id: 89,
+        section: "American History",
+        subsection: "Colonial Period and Independence",
+        q: "Alexander Hamilton is famous for many things. Name one.",
+        a: [
+          "First Secretary of the Treasury",
+          "One of the writers of the Federalist Papers",
+          "Helped establish the First Bank of the United States",
+          "Aide to General George Washington",
+          "Member of the Continental Congress",
+        ],
+      },
+      {
+        id: 90,
+        section: "American History",
+        subsection: "1800s",
+        q: "What territory did the United States buy from France in 1803?",
+        a: [
+          "Louisiana Territory",
+          "Louisiana",
+        ],
+      },
+      {
+        id: 91,
+        section: "American History",
+        subsection: "1800s",
+        q: "Name one war fought by the United States in the 1800s.",
+        a: [
+          "War of 1812",
+          "Mexican-American War",
+          "Civil War",
+          "Spanish-American War",
+        ],
+      },
+      {
+        id: 92,
+        section: "American History",
+        subsection: "1800s",
+        q: "Name the U.S. war between the North and the South.",
+        a: [
+          "The Civil War",
+        ],
+      },
+      {
+        id: 93,
+        section: "American History",
+        subsection: "1800s",
+        q: "The Civil War had many important events. Name one.",
+        a: [
+          "(Battle of) Fort Sumter",
+          "Emancipation Proclamation",
+          "(Battle of) Vicksburg",
+          "(Battle of) Gettysburg",
+          "Sherman’s March",
+          "(Surrender at) Appomattox",
+          "(Battle of) Antietam/Sharpsburg",
+          "Lincoln was assassinated.",
+        ],
+      },
+      {
+        id: 94,
+        section: "American History",
+        subsection: "1800s",
+        q: "Abraham Lincoln is famous for many things. Name one.",
+        a: [
+          "Freed the slaves (Emancipation Proclamation)",
+          "Saved (or preserved) the Union",
+          "Led the United States during the Civil War",
+          "16th president of the United States",
+          "Delivered the Gettysburg Address",
+        ],
+      },
+      {
+        id: 95,
+        section: "American History",
+        subsection: "1800s",
+        q: "What did the Emancipation Proclamation do?",
+        a: [
+          "Freed the slaves",
+          "Freed slaves in the Confederacy",
+          "Freed slaves in the Confederate states",
+          "Freed slaves in most Southern states",
+        ],
+      },
+      {
+        id: 96,
+        section: "American History",
+        subsection: "1800s",
+        q: "What U.S. war ended slavery?",
+        a: [
+          "The Civil War",
+        ],
+      },
+      {
+        id: 97,
+        section: "American History",
+        subsection: "1800s",
+        q: "What amendment says all persons born or naturalized in the United States, and subject to the jurisdiction thereof, are U.S. citizens?",
+        a: [
+          "14th Amendment",
+        ],
+      },
+      {
+        id: 98,
+        section: "American History",
+        subsection: "1800s",
+        q: "When did all men get the right to vote?",
+        a: [
+          "After the Civil War",
+          "During Reconstruction",
+          "(With the) 15th Amendment",
+          "1870",
+        ],
+      },
+      {
+        id: 99,
+        section: "American History",
+        subsection: "1800s",
+        q: "Name one leader of the women’s rights movement in the 1800s.",
+        a: [
+          "Susan B. Anthony",
+          "Elizabeth Cady Stanton",
+          "Sojourner Truth",
+          "Harriet Tubman",
+          "Lucretia Mott",
+          "Lucy Stone",
+        ],
+      },
+      {
+        id: 100,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Name one war fought by the United States in the 1900s.",
+        a: [
+          "World War I",
+          "World War II",
+          "Korean War",
+          "Vietnam War",
+          "(Persian) Gulf War",
+        ],
+      },
+      {
+        id: 101,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Why did the United States enter World War I?",
+        a: [
+          "Because Germany attacked U.S. (civilian) ships",
+          "To support the Allied Powers (England, France, Italy, and Russia)",
+          "To oppose the Central Powers (Germany, Austria-Hungary, the Ottoman Empire, and Bulgaria)",
+        ],
+      },
+      {
+        id: 102,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "When did all women get the right to vote?",
+        a: [
+          "1920",
+          "After World War I",
+          "(With the) 19th Amendment",
+        ],
+      },
+      {
+        id: 103,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "What was the Great Depression?",
+        a: [
+          "Longest economic recession in modern history",
+        ],
+      },
+      {
+        id: 104,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "When did the Great Depression start?",
+        a: [
+          "The Great Crash (1929)",
+          "Stock market crash of 1929",
+        ],
+      },
+      {
+        id: 105,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Who was president during the Great Depression and World War II?",
+        a: [
+          "(Franklin) Roosevelt",
+        ],
+      },
+      {
+        id: 106,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Why did the United States enter World War II?",
+        a: [
+          "(Bombing of) Pearl Harbor",
+          "Japanese attacked Pearl Harbor",
+          "To support the Allied Powers (England, France, and Russia)",
+          "To oppose the Axis Powers (Germany, Italy, and Japan)",
+        ],
+      },
+      {
+        id: 107,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Dwight Eisenhower is famous for many things. Name one.",
+        a: [
+          "General during World War II",
+          "President at the end of (during) the Korean War",
+          "34th president of the United States",
+          "Signed the Federal-Aid Highway Act of 1956 (Created the Interstate System)",
+        ],
+      },
+      {
+        id: 108,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Who was the United States’ main rival during the Cold War?",
+        a: [
+          "Soviet Union",
+          "USSR",
+          "Russia",
+        ],
+      },
+      {
+        id: 109,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "During the Cold War, what was one main concern of the United States?",
+        a: [
+          "Communism",
+          "Nuclear war",
+        ],
+      },
+      {
+        id: 110,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Why did the United States enter the Korean War?",
+        a: [
+          "To stop the spread of communism",
+        ],
+      },
+      {
+        id: 111,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Why did the United States enter the Vietnam War?",
+        a: [
+          "To stop the spread of communism",
+        ],
+      },
+      {
+        id: 112,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "What did the civil rights movement do?",
+        a: [
+          "Fought to end racial discrimination",
+        ],
+      },
+      {
+        id: 113,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Martin Luther King, Jr. is famous for many things. Name one.",
+        a: [
+          "Fought for civil rights",
+          "Worked for equality for all Americans",
+          "Worked to ensure that people would “not be judged by the color of their skin, but by the content of their character”",
+        ],
+      },
+      {
+        id: 114,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Why did the United States enter the Persian Gulf War?",
+        a: [
+          "To force the Iraqi military from Kuwait",
+        ],
+      },
+      {
+        id: 115,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "What major event happened on September 11, 2001 in the United States?",
+        a: [
+          "Terrorists attacked the United States",
+          "Terrorists took over two planes and crashed them into the World Trade Center in New York City",
+          "Terrorists took over a plane and crashed into the Pentagon in Arlington, Virginia",
+          "Terrorists took over a plane originally aimed at Washington, D.C., and crashed in a field in Pennsylvania",
+        ],
+      },
+      {
+        id: 116,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Name one U.S. military conflict after the September 11, 2001 attacks.",
+        a: [
+          "(Global) War on Terror",
+          "War in Afghanistan",
+          "War in Iraq",
+        ],
+      },
+      {
+        id: 117,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Name one American Indian tribe in the United States.",
+        a: [
+          "Apache",
+          "Blackfeet",
+          "Cayuga",
+          "Cherokee",
+          "Cheyenne",
+          "Chippewa",
+          "Choctaw",
+          "Creek",
+          "Crow",
+          "Hopi",
+          "Huron",
+          "Inupiat",
+          "Lakota",
+          "Mohawk",
+          "Mohegan",
+          "Navajo",
+          "Oneida",
+          "Onondaga",
+          "Pueblo",
+          "Seminole",
+          "Seneca",
+          "Shawnee",
+          "Sioux",
+          "Teton",
+          "Tuscarora For a complete list of tribes, please visit bia.gov.",
+        ],
+      },
+      {
+        id: 118,
+        section: "American History",
+        subsection: "Recent American History and Other Important Historical Information",
+        q: "Name one example of an American innovation.",
+        a: [
+          "Light bulb",
+          "Automobile (cars, internal combustion engine)",
+          "Skyscrapers",
+          "Airplane",
+          "Assembly line",
+          "Landing on the moon",
+          "Integrated circuit (IC)",
+        ],
+      },
+      {
+        id: 119,
+        section: "Symbols And Holidays",
+        subsection: "Symbols",
+        q: "What is the capital of the United States?",
+        a: [
+          "Washington, D.C.",
+        ],
+      },
+      {
+        id: 120,
+        section: "Symbols And Holidays",
+        subsection: "Symbols",
+        q: "Where is the Statue of Liberty?",
+        a: [
+          "New York (Harbor)",
+          "Liberty Island [Also acceptable are New Jersey, near New York City, and on the Hudson (River).]",
+        ],
+      },
+      {
+        id: 121,
+        section: "Symbols And Holidays",
+        subsection: "Symbols",
+        q: "Why does the flag have 13 stripes?",
+        a: [
+          "(Because there were) 13 original colonies",
+          "(Because the stripes) represent the original colonies",
+        ],
+      },
+      {
+        id: 122,
+        section: "Symbols And Holidays",
+        subsection: "Symbols",
+        q: "Why does the flag have 50 stars?",
+        a: [
+          "(Because there is) one star for each state",
+          "(Because) each star represents a state",
+          "(Because there are) 50 states",
+        ],
+      },
+      {
+        id: 123,
+        section: "Symbols And Holidays",
+        subsection: "Symbols",
+        q: "What is the name of the national anthem?",
+        a: [
+          "The Star-Spangled Banner",
+        ],
+      },
+      {
+        id: 124,
+        section: "Symbols And Holidays",
+        subsection: "Symbols",
+        q: "The Nation’s first motto was “E Pluribus Unum.” What does that mean?",
+        a: [
+          "Out of many, one",
+          "We all become one",
+        ],
+      },
+      {
+        id: 125,
+        section: "Symbols And Holidays",
+        subsection: "Holidays",
+        q: "What is Independence Day?",
+        a: [
+          "A holiday to celebrate U.S. independence (from Britain)",
+          "The country’s birthday",
+        ],
+      },
+      {
+        id: 126,
+        section: "Symbols And Holidays",
+        subsection: "Holidays",
+        q: "Name three national U.S. holidays.",
+        a: [
+          "New Year’s Day",
+          "Martin Luther King, Jr. Day",
+          "Presidents Day (Washington’s Birthday)",
+          "Memorial Day",
+          "Juneteenth",
+          "Independence Day",
+          "Labor Day",
+          "Columbus Day",
+          "Veterans Day",
+          "Thanksgiving Day",
+          "Christmas Day",
+        ],
+      },
+      {
+        id: 127,
+        section: "Symbols And Holidays",
+        subsection: "Holidays",
+        q: "What is Memorial Day?",
+        a: [
+          "A holiday to honor soldiers who died in military service",
+        ],
+      },
+      {
+        id: 128,
+        section: "Symbols And Holidays",
+        subsection: "Holidays",
+        q: "What is Veterans Day?",
+        a: [
+          "A holiday to honor people in the (U.S.) military",
+          "A holiday to honor people who have served (in the U.S. military)",
+        ],
+      },
+    ];
+
+    const ZH_DATA = {
+      1: {
+        q: "美国的政府形式是什么？",
+        a: [
+          "共和国",
+          "以宪法为基础的联邦共和国",
+          "代议制民主",
+        ],
+      },
+      2: {
+        q: "国家的最高法律是什么？",
+        a: [
+          "（美国）宪法",
+        ],
+      },
+      3: {
+        q: "说出一件美国宪法所做的事。",
+        a: [
+          "设立政府",
+          "规定政府权力",
+          "规定政府组成",
+          "保护人民的权利",
+        ],
+      },
+      4: {
+        q: "美国宪法以“我们人民”开头。“我们人民”是什么意思？",
+        a: [
+          "自我治理",
+          "人民主权",
+          "被统治者的同意",
+          "人民应当自己治理",
+          "（社会契约的）例子",
+        ],
+      },
+      5: {
+        q: "美国宪法如何进行修改？",
+        a: [
+          "修正案",
+          "修宪程序",
+        ],
+      },
+      6: {
+        q: "《权利法案》保护什么？",
+        a: [
+          "（美国人的基本）权利",
+          "（在美国居住的人的基本）权利",
+        ],
+      },
+      7: {
+        q: "美国宪法有多少条修正案？",
+        a: [
+          "二十七条（27）",
+        ],
+      },
+      8: {
+        q: "《独立宣言》为什么重要？",
+        a: [
+          "它说明美国摆脱英国统治。",
+          "它说明人人生而平等。",
+          "它确认天赋权利。",
+          "它确认个人自由。",
+        ],
+      },
+      9: {
+        q: "哪份建国文件说美国殖民地脱离英国？",
+        a: [
+          "《独立宣言》",
+        ],
+      },
+      10: {
+        q: "说出《独立宣言》和美国宪法中的两个重要理念。",
+        a: [
+          "平等",
+          "自由",
+          "社会契约",
+          "天赋权利",
+          "有限政府",
+          "自我治理",
+        ],
+      },
+      11: {
+        q: "“生命、自由和追求幸福”出自哪份建国文件？",
+        a: [
+          "《独立宣言》",
+        ],
+      },
+      12: {
+        q: "美国的经济制度是什么？",
+        a: [
+          "资本主义",
+          "自由市场经济",
+        ],
+      },
+      13: {
+        q: "什么是法治？",
+        a: [
+          "人人都必须遵守法律。",
+          "领导人必须守法。",
+          "政府必须守法。",
+          "没有人凌驾于法律之上。",
+        ],
+      },
+      14: {
+        q: "许多文件影响了美国宪法。说出一个。",
+        a: [
+          "《独立宣言》",
+          "《邦联条例》",
+          "《联邦党人文集》",
+          "《反联邦党人文集》",
+          "《弗吉尼亚权利宣言》",
+          "《康涅狄格基本法》",
+          "《五月花号公约》",
+          "《易洛魁和平大法》",
+        ],
+      },
+      15: {
+        q: "政府有三个分支。为什么？",
+        a: [
+          "以防某一部分过于强大",
+          "制衡",
+          "权力分立",
+        ],
+      },
+      16: {
+        q: "说出政府的三个分支。",
+        a: [
+          "立法、行政和司法",
+          "国会、总统和法院",
+        ],
+      },
+      17: {
+        q: "美国总统负责哪个政府分支？",
+        a: [
+          "行政部门",
+        ],
+      },
+      18: {
+        q: "联邦政府哪一部分制定法律？",
+        a: [
+          "（美国）国会",
+          "（美国或国家）立法机构",
+          "立法部门",
+        ],
+      },
+      19: {
+        q: "美国国会由哪两院组成？",
+        a: [
+          "参议院和众议院",
+        ],
+      },
+      20: {
+        q: "说出美国国会的一项权力。",
+        a: [
+          "制定法律",
+          "宣战",
+          "制定联邦预算",
+        ],
+      },
+      21: {
+        q: "美国有多少名参议员？",
+        a: [
+          "一百名（100）",
+        ],
+      },
+      22: {
+        q: "美国参议员任期多少年？",
+        a: [
+          "六年（6）",
+        ],
+      },
+      23: {
+        q: "你所在州现任的一位美国参议员是谁？",
+        a: [
+          "答案因人而异。[华盛顿特区居民和美国领地居民应回答：特区（或申请人居住的领地）没有美国参议员。]",
+        ],
+      },
+      24: {
+        q: "众议院有多少名有表决权的议员？",
+        a: [
+          "四百三十五名（435）",
+        ],
+      },
+      25: {
+        q: "众议院议员任期多少年？",
+        a: [
+          "两年（2）",
+        ],
+      },
+      26: {
+        q: "为什么美国众议员任期比参议员短？",
+        a: [
+          "以更贴近公众舆论",
+        ],
+      },
+      27: {
+        q: "每个州有多少名参议员？",
+        a: [
+          "两名（2）",
+        ],
+      },
+      28: {
+        q: "为什么每个州都有两名参议员？",
+        a: [
+          "平等代表（为小州）",
+          "大妥协（康涅狄格妥协）",
+        ],
+      },
+      29: {
+        q: "说出你的美国众议员。",
+        a: [
+          "答案因人而异。[拥有无表决权代表或驻地专员的领地居民可提供该代表或专员的名字。也可回答该领地在国会没有（有表决权的）代表。]",
+        ],
+      },
+      30: {
+        q: "现任众议院议长是谁？",
+        a: [
+          "请访问 uscis.gov/citizenship/testupdates 查询现任众议院议长姓名。",
+        ],
+      },
+      31: {
+        q: "美国参议员代表谁？",
+        a: [
+          "本州公民",
+          "本州人民",
+        ],
+      },
+      32: {
+        q: "谁选举美国参议员？",
+        a: [
+          "本州公民",
+        ],
+      },
+      33: {
+        q: "美国众议员代表谁？",
+        a: [
+          "其（国会）选区的公民",
+          "其选区的公民",
+          "其（国会）选区的人",
+          "其选区的人",
+        ],
+      },
+      34: {
+        q: "谁选举众议员？",
+        a: [
+          "其（国会）选区的公民",
+        ],
+      },
+      35: {
+        q: "有些州的众议员比其他州多。为什么？",
+        a: [
+          "（因为）该州人口",
+          "（因为）他们人口更多",
+          "（因为）有些州人口更多",
+        ],
+      },
+      36: {
+        q: "美国总统的任期是多少年？",
+        a: [
+          "四年（4）",
+        ],
+      },
+      37: {
+        q: "美国总统只能任两届。为什么？",
+        a: [
+          "（因为）第22条修正案",
+          "防止总统权力过大",
+        ],
+      },
+      38: {
+        q: "现任美国总统是谁？",
+        a: [
+          "请访问 uscis.gov/citizenship/testupdates 查询现任美国总统姓名。",
+        ],
+      },
+      39: {
+        q: "现任美国副总统是谁？",
+        a: [
+          "请访问 uscis.gov/citizenship/testupdates 查询现任美国副总统姓名。",
+        ],
+      },
+      40: {
+        q: "如果总统不能继续任职，谁会成为总统？",
+        a: [
+          "（美国）副总统",
+        ],
+      },
+      41: {
+        q: "说出总统的一项权力。",
+        a: [
+          "签署法案成为法律",
+          "否决法案",
+          "执行法律",
+          "（军队）总司令",
+          "首席外交官",
+          "任命联邦法官",
+        ],
+      },
+      42: {
+        q: "谁是美国军队的总司令？",
+        a: [
+          "（美国）总统",
+        ],
+      },
+      43: {
+        q: "谁签署法案使其成为法律？",
+        a: [
+          "（美国）总统",
+        ],
+      },
+      44: {
+        q: "谁否决法案？",
+        a: [
+          "（美国）总统",
+        ],
+      },
+      45: {
+        q: "谁任命联邦法官？",
+        a: [
+          "（美国）总统",
+        ],
+      },
+      46: {
+        q: "行政部门有许多部分。说出一个。",
+        a: [
+          "（美国）总统",
+          "内阁",
+          "联邦部门和机构",
+        ],
+      },
+      47: {
+        q: "总统内阁做什么？",
+        a: [
+          "向（美国）总统提供建议",
+        ],
+      },
+      48: {
+        q: "说出两个内阁级职位。",
+        a: [
+          "司法部长",
+          "农业部长",
+          "商务部长",
+          "教育部长",
+          "能源部长",
+          "卫生与公众服务部长",
+          "国土安全部长",
+          "住房与城市发展部长",
+          "内政部长",
+          "劳工部长",
+          "国务卿",
+          "交通部长",
+          "财政部长",
+          "退伍军人事务部长",
+          "战争部长（国防部长）",
+          "副总统",
+          "环境保护署署长",
+          "小企业管理局局长",
+          "中央情报局局长",
+          "管理与预算办公室主任",
+          "国家情报总监",
+          "美国贸易代表",
+        ],
+      },
+      49: {
+        q: "选举人团为何重要？",
+        a: [
+          "它决定谁当选总统。",
+          "它在总统普选与国会选举之间提供折中。",
+        ],
+      },
+      50: {
+        q: "司法部门的一部分是什么？",
+        a: [
+          "最高法院",
+          "联邦法院",
+        ],
+      },
+      51: {
+        q: "司法部门做什么？",
+        a: [
+          "审查法律",
+          "解释法律",
+          "解决关于法律的争议（分歧）",
+          "判断法律是否违背（美国）宪法",
+        ],
+      },
+      52: {
+        q: "美国最高法院是什么？",
+        a: [
+          "最高法院",
+        ],
+      },
+      53: {
+        q: "最高法院有多少个席位？",
+        a: [
+          "九个（9）",
+        ],
+      },
+      54: {
+        q: "通常需要多少名最高法院大法官作出裁决？",
+        a: [
+          "五名（5）",
+        ],
+      },
+      55: {
+        q: "最高法院大法官任期多长？",
+        a: [
+          "终身",
+          "终身任命",
+          "直到退休",
+        ],
+      },
+      56: {
+        q: "最高法院大法官终身任职。为什么？",
+        a: [
+          "保持独立（不受政治影响）",
+          "限制外部（政治）影响",
+        ],
+      },
+      57: {
+        q: "现任美国首席大法官是谁？",
+        a: [
+          "请访问 uscis.gov/citizenship/testupdates 查询现任美国首席大法官姓名。",
+        ],
+      },
+      58: {
+        q: "说出一项仅属于联邦政府的权力。",
+        a: [
+          "印制纸币",
+          "铸造硬币",
+          "宣战",
+          "组建军队",
+          "缔结条约",
+          "制定外交政策",
+        ],
+      },
+      59: {
+        q: "说出一项仅属于州政府的权力。",
+        a: [
+          "提供学校教育",
+          "提供保护（警察）",
+          "提供安全（消防部门）",
+          "发放驾驶执照",
+          "批准分区和土地使用",
+        ],
+      },
+      60: {
+        q: "第十条修正案的目的是什么？",
+        a: [
+          "（它规定）未授予联邦政府的权力属于各州或人民。",
+        ],
+      },
+      61: {
+        q: "你所在州的现任州长是谁？",
+        a: [
+          "答案因人而异。[华盛顿特区居民应回答：特区没有州长。]",
+        ],
+      },
+      62: {
+        q: "你所在州的州府在哪里？",
+        a: [
+          "答案因人而异。[华盛顿特区居民应回答：特区不是州，没有州府。美国领地居民应说出该领地的首府。]",
+        ],
+      },
+      63: {
+        q: "美国宪法中有四条关于谁能投票的修正案。描述其中一条。",
+        a: [
+          "18岁及以上的公民（可以投票）。",
+          "投票不必缴纳（人头税）。",
+          "任何公民都可以投票。（男女都可投票。）",
+          "任何种族的男性公民（可以投票）。",
+        ],
+      },
+      64: {
+        q: "谁可以在联邦选举中投票、竞选联邦公职并担任陪审员？",
+        a: [
+          "公民",
+          "美国公民",
+          "美国公民",
+        ],
+      },
+      65: {
+        q: "在美国居住的每个人有哪些三项权利？",
+        a: [
+          "表达自由",
+          "言论自由",
+          "集会自由",
+          "向政府请愿的自由",
+          "宗教自由",
+          "持枪权",
+        ],
+      },
+      66: {
+        q: "宣读效忠誓词时我们对什么表示忠诚？",
+        a: [
+          "美国",
+          "国旗",
+        ],
+      },
+      67: {
+        q: "新公民在效忠誓词中作出哪两项承诺？",
+        a: [
+          "放弃对其他国家的忠诚",
+          "捍卫（美国）宪法",
+          "遵守美国法律",
+          "如有需要，服兵役",
+          "如有需要，为国家服务（帮助、做重要工作）",
+          "忠于美国",
+        ],
+      },
+      68: {
+        q: "人们如何成为美国公民？",
+        a: [
+          "在美国出生，符合第14条修正案规定的条件",
+          "归化入籍",
+          "取得衍生公民身份（按国会规定的条件）",
+        ],
+      },
+      69: {
+        q: "在美国参与公民活动的两个例子是什么？",
+        a: [
+          "投票",
+          "竞选公职",
+          "加入政党",
+          "参与竞选活动",
+          "加入公民团体",
+          "加入社区组织",
+          "向民选官员表达（某问题的）意见",
+          "联系民选官员",
+          "支持或反对某问题或政策",
+          "给报纸写信",
+        ],
+      },
+      70: {
+        q: "美国人服务国家的一种方式是什么？",
+        a: [
+          "投票",
+          "纳税",
+          "守法",
+          "服兵役",
+          "竞选公职",
+          "在地方、州或联邦政府工作",
+        ],
+      },
+      71: {
+        q: "为什么缴纳联邦税很重要？",
+        a: [
+          "法律要求",
+          "所有人缴税以资助联邦政府",
+          "（美国）宪法（第16条修正案）要求",
+          "公民义务",
+        ],
+      },
+      72: {
+        q: "18至25岁的男性必须登记征兵。说出一个原因。",
+        a: [
+          "法律要求",
+          "公民义务",
+          "如需征兵，使征召更公平",
+        ],
+      },
+      73: {
+        q: "殖民者来到美国有许多原因。说出一个。",
+        a: [
+          "自由",
+          "政治自由",
+          "宗教自由",
+          "经济机会",
+          "逃离迫害",
+        ],
+      },
+      74: {
+        q: "欧洲人到来之前，谁住在美国？",
+        a: [
+          "美国印第安人",
+          "美洲原住民",
+        ],
+      },
+      75: {
+        q: "哪一群体被抓走并卖为奴隶？",
+        a: [
+          "非洲人",
+          "来自非洲的人",
+        ],
+      },
+      76: {
+        q: "美国人为赢得独立与英国打了哪场战争？",
+        a: [
+          "美国革命",
+          "（美国）独立战争",
+          "（美国）独立战争",
+        ],
+      },
+      77: {
+        q: "说出美国宣布脱离英国独立的一个原因。",
+        a: [
+          "高税收",
+          "未经代表的课税",
+          "英国士兵驻扎在美国人家中（寄宿、征住）",
+          "他们没有自我治理权",
+          "波士顿惨案",
+          "波士顿倾茶事件（茶叶法）",
+          "印花税法",
+          "糖税法",
+          "汤申德法案",
+          "不可容忍法案（强制法案）",
+        ],
+      },
+      78: {
+        q: "谁起草了《独立宣言》？",
+        a: [
+          "（托马斯）杰斐逊",
+        ],
+      },
+      79: {
+        q: "《独立宣言》在何时通过？",
+        a: [
+          "1776年7月4日",
+        ],
+      },
+      80: {
+        q: "美国独立战争有许多重要事件。说出一个。",
+        a: [
+          "邦克山之战",
+          "《独立宣言》",
+          "华盛顿横渡特拉华河（特伦顿战役）",
+          "萨拉托加战役",
+          "福吉谷（军营）",
+          "约克镇战役（英军在约克镇投降）",
+        ],
+      },
+      81: {
+        q: "最初有13个州。说出五个。",
+        a: [
+          "新罕布什尔",
+          "马萨诸塞",
+          "罗德岛",
+          "康涅狄格",
+          "纽约",
+          "新泽西",
+          "宾夕法尼亚",
+          "特拉华",
+          "马里兰",
+          "弗吉尼亚",
+          "北卡罗来纳",
+          "南卡罗来纳",
+          "佐治亚",
+        ],
+      },
+      82: {
+        q: "哪份建国文件写于1787年？",
+        a: [
+          "（美国）宪法",
+        ],
+      },
+      83: {
+        q: "《联邦党人文集》支持通过美国宪法。说出一位作者。",
+        a: [
+          "（詹姆斯）麦迪逊",
+          "（亚历山大）汉密尔顿",
+          "（约翰）杰伊",
+          "普布利乌斯",
+        ],
+      },
+      84: {
+        q: "《联邦党人文集》为什么重要？",
+        a: [
+          "它帮助人们理解（美国）宪法。",
+          "它支持通过（美国）宪法。",
+        ],
+      },
+      85: {
+        q: "本杰明·富兰克林因许多事著名。说出一个。",
+        a: [
+          "创建了第一家免费公共图书馆",
+          "美国第一任邮政总长",
+          "协助起草《独立宣言》",
+          "发明家",
+          "美国外交官",
+        ],
+      },
+      86: {
+        q: "乔治·华盛顿因许多事著名。说出一个。",
+        a: [
+          "“国父”",
+          "美国第一任总统",
+          "大陆军总司令",
+          "宪法制宪会议主席",
+        ],
+      },
+      87: {
+        q: "托马斯·杰斐逊因许多事著名。说出一个。",
+        a: [
+          "《独立宣言》的作者",
+          "美国第三任总统",
+          "通过路易斯安那购地使美国领土翻倍",
+          "第一任国务卿",
+          "创立弗吉尼亚大学",
+          "《弗吉尼亚宗教自由法令》的作者",
+        ],
+      },
+      88: {
+        q: "詹姆斯·麦迪逊因许多事著名。说出一个。",
+        a: [
+          "“宪法之父”",
+          "美国第四任总统",
+          "1812年战争时期的总统",
+          "《联邦党人文集》作者之一",
+        ],
+      },
+      89: {
+        q: "亚历山大·汉密尔顿因许多事著名。说出一个。",
+        a: [
+          "第一任财政部长",
+          "《联邦党人文集》作者之一",
+          "协助建立美国第一银行",
+          "乔治·华盛顿将军的副官",
+          "大陆会议成员",
+        ],
+      },
+      90: {
+        q: "美国在1803年从法国购买了哪块领土？",
+        a: [
+          "路易斯安那领地",
+          "路易斯安那",
+        ],
+      },
+      91: {
+        q: "说出美国在19世纪参加的一场战争。",
+        a: [
+          "1812年战争",
+          "美墨战争",
+          "内战",
+          "美西战争",
+        ],
+      },
+      92: {
+        q: "说出美国南北之间的战争。",
+        a: [
+          "内战",
+        ],
+      },
+      93: {
+        q: "美国内战有许多重要事件。说出一个。",
+        a: [
+          "萨姆特堡战役",
+          "《解放宣言》",
+          "维克斯堡战役",
+          "葛底斯堡战役",
+          "谢尔曼的进军",
+          "阿波马托克斯（投降）",
+          "安提坦/夏普斯堡战役",
+          "林肯被刺杀。",
+        ],
+      },
+      94: {
+        q: "亚伯拉罕·林肯因许多事著名。说出一个。",
+        a: [
+          "解放奴隶（《解放宣言》）",
+          "维护（或保全）联邦",
+          "在内战期间领导美国",
+          "美国第16任总统",
+          "发表葛底斯堡演说",
+        ],
+      },
+      95: {
+        q: "《解放宣言》做了什么？",
+        a: [
+          "解放奴隶",
+          "解放邦联的奴隶",
+          "解放邦联各州的奴隶",
+          "解放大多数南方州的奴隶",
+        ],
+      },
+      96: {
+        q: "哪场美国战争结束了奴隶制度？",
+        a: [
+          "内战",
+        ],
+      },
+      97: {
+        q: "哪条修正案规定：凡在美国出生或归化并受其管辖的人，都是美国公民？",
+        a: [
+          "第14条修正案",
+        ],
+      },
+      98: {
+        q: "所有男性何时获得投票权？",
+        a: [
+          "内战之后",
+          "重建时期",
+          "（随着）第15条修正案",
+          "1870年",
+        ],
+      },
+      99: {
+        q: "说出19世纪妇女权利运动的一位领袖。",
+        a: [
+          "苏珊·B·安东尼",
+          "伊丽莎白·凯迪·斯坦顿",
+          "索杰纳·特鲁斯",
+          "哈丽特·塔布曼",
+          "卢克蕾莎·莫特",
+          "露西·斯通",
+        ],
+      },
+      100: {
+        q: "说出美国在20世纪参加的一场战争。",
+        a: [
+          "第一次世界大战",
+          "第二次世界大战",
+          "朝鲜战争",
+          "越南战争",
+          "（波斯）湾战争",
+        ],
+      },
+      101: {
+        q: "美国为什么参加第一次世界大战？",
+        a: [
+          "因为德国攻击了美国（民用）船只",
+          "为了支持协约国（英国、法国、意大利、俄罗斯）",
+          "为了反对同盟国（德国、奥匈帝国、奥斯曼帝国、保加利亚）",
+        ],
+      },
+      102: {
+        q: "所有女性何时获得投票权？",
+        a: [
+          "1920年",
+          "第一次世界大战之后",
+          "（随着）第19条修正案",
+        ],
+      },
+      103: {
+        q: "大萧条是什么？",
+        a: [
+          "现代史上最长的经济衰退",
+        ],
+      },
+      104: {
+        q: "大萧条何时开始？",
+        a: [
+          "大崩盘（1929年）",
+          "1929年股市崩盘",
+        ],
+      },
+      105: {
+        q: "大萧条和二战期间的总统是谁？",
+        a: [
+          "（富兰克林）罗斯福",
+        ],
+      },
+      106: {
+        q: "美国为什么参加第二次世界大战？",
+        a: [
+          "（珍珠港）遭轰炸",
+          "日本袭击珍珠港",
+          "为了支持同盟国（英国、法国、俄罗斯）",
+          "为了反对轴心国（德国、意大利、日本）",
+        ],
+      },
+      107: {
+        q: "德怀特·艾森豪威尔因许多事著名。说出一个。",
+        a: [
+          "第二次世界大战期间的将军",
+          "朝鲜战争结束时（期间）的总统",
+          "美国第34任总统",
+          "签署1956年联邦援助公路法（建立州际公路系统）",
+        ],
+      },
+      108: {
+        q: "冷战期间美国的主要对手是谁？",
+        a: [
+          "苏联",
+          "苏联",
+          "俄罗斯",
+        ],
+      },
+      109: {
+        q: "冷战期间美国的一个主要担忧是什么？",
+        a: [
+          "共产主义",
+          "核战争",
+        ],
+      },
+      110: {
+        q: "美国为什么参加朝鲜战争？",
+        a: [
+          "阻止共产主义扩张",
+        ],
+      },
+      111: {
+        q: "美国为什么参加越南战争？",
+        a: [
+          "阻止共产主义扩张",
+        ],
+      },
+      112: {
+        q: "民权运动做了什么？",
+        a: [
+          "争取结束种族歧视",
+        ],
+      },
+      113: {
+        q: "马丁·路德·金（小）因许多事著名。说出一个。",
+        a: [
+          "为民权而奋斗",
+          "为所有美国人的平等而努力",
+          "努力确保人们“不是以肤色而是以品格内容被评价”",
+        ],
+      },
+      114: {
+        q: "美国为什么参加波斯湾战争？",
+        a: [
+          "迫使伊拉克军队撤出科威特",
+        ],
+      },
+      115: {
+        q: "2001年9月11日在美国发生了什么重大事件？",
+        a: [
+          "恐怖分子袭击了美国",
+          "恐怖分子劫持两架飞机撞向纽约世界贸易中心",
+          "恐怖分子劫持一架飞机撞向弗吉尼亚州阿灵顿的五角大楼",
+          "恐怖分子劫持一架原计划飞往华盛顿特区的飞机，坠毁在宾夕法尼亚州的田野",
+        ],
+      },
+      116: {
+        q: "说出2001年9月11日袭击后美国参与的一场军事冲突。",
+        a: [
+          "（全球）反恐战争",
+          "阿富汗战争",
+          "伊拉克战争",
+        ],
+      },
+      117: {
+        q: "说出一个美国的美洲原住民部族。",
+        a: [
+          "阿帕奇",
+          "黑脚",
+          "卡尤加",
+          "切罗基",
+          "夏延",
+          "奇佩瓦",
+          "乔克托",
+          "克里克",
+          "乌鸦",
+          "霍皮",
+          "休伦",
+          "伊努皮亚特",
+          "拉科塔",
+          "莫霍克",
+          "莫希甘",
+          "纳瓦霍",
+          "奥奈达",
+          "奥农达加",
+          "普韦布洛",
+          "塞米诺尔",
+          "塞内卡",
+          "肖尼",
+          "苏族",
+          "特顿",
+          "塔斯卡罗拉",
+        ],
+        note: "完整部族名单请访问 bia.gov。",
+      },
+      118: {
+        q: "说出一个美国的创新成果。",
+        a: [
+          "电灯泡",
+          "汽车（内燃机汽车）",
+          "摩天大楼",
+          "飞机",
+          "流水线",
+          "登月",
+          "集成电路（IC）",
+        ],
+      },
+      119: {
+        q: "美国的首都是什么？",
+        a: [
+          "华盛顿特区",
+        ],
+      },
+      120: {
+        q: "自由女神像在哪里？",
+        a: [
+          "纽约（港）",
+          "自由岛【也可回答新泽西、纽约市附近、哈德逊河上。】",
+        ],
+      },
+      121: {
+        q: "国旗为什么有13条条纹？",
+        a: [
+          "（因为）最初有13个殖民地",
+          "（因为条纹）代表最初的殖民地",
+        ],
+      },
+      122: {
+        q: "国旗为什么有50颗星？",
+        a: [
+          "（因为）每个州一颗星",
+          "（因为）每颗星代表一个州",
+          "（因为）有50个州",
+        ],
+      },
+      123: {
+        q: "国歌叫什么？",
+        a: [
+          "《星条旗之歌》",
+        ],
+      },
+      124: {
+        q: "国家的第一个格言是“E Pluribus Unum”。这是什么意思？",
+        a: [
+          "合众为一",
+          "我们合为一体",
+        ],
+      },
+      125: {
+        q: "独立日是什么？",
+        a: [
+          "庆祝美国（从英国）独立的节日",
+          "国家生日",
+        ],
+      },
+      126: {
+        q: "说出三个美国全国性节日。",
+        a: [
+          "新年",
+          "马丁·路德·金（小）纪念日",
+          "总统日（华盛顿诞辰）",
+          "阵亡将士纪念日",
+          "六月节",
+          "独立日",
+          "劳动节",
+          "哥伦布日",
+          "退伍军人节",
+          "感恩节",
+          "圣诞节",
+        ],
+      },
+      127: {
+        q: "阵亡将士纪念日是什么？",
+        a: [
+          "纪念在军中殉职的士兵的节日",
+        ],
+      },
+      128: {
+        q: "退伍军人节是什么？",
+        a: [
+          "纪念（美国）军人的节日",
+          "纪念曾服役（于美国军队）人员的节日",
+        ],
+      },
+    };
+
+    const ITEMS_PER_PAGE = 10;
+    let page = 1;
+
+    const list = document.getElementById("list");
+    const pager = document.getElementById("pager");
+    const prevBtn = document.getElementById("prev");
+    const nextBtn = document.getElementById("next");
+
+    function normalizeItem(item) {
+      let noteEn = "";
+      let answersEn = item.a.slice();
+      const noteIdx = answersEn.findIndex((t) => t.includes("For a complete list of tribes"));
+      if (noteIdx >= 0) {
+        const parts = answersEn[noteIdx].split(" For a complete list of tribes, please visit bia.gov.");
+        answersEn[noteIdx] = parts[0].trim();
+        noteEn = "For a complete list of tribes, please visit bia.gov.";
+      }
+
+      const zh = ZH_DATA[item.id] || { q: "", a: [] };
+      const answers = answersEn.map((en, i) => ({
+        en,
+        zh: zh.a[i] || "",
+      }));
+
+      return {
+        ...item,
+        q_zh: zh.q || "",
+        answers,
+        starred: STAR_IDS.has(item.id),
+        note_en: noteEn,
+        note_zh: zh.note || "",
+      };
+    }
+
+    const DATA = EN_DATA.map(normalizeItem);
+
+    function speak(en, zh) {
+      if (!window.speechSynthesis) return;
+      const synth = window.speechSynthesis;
+      synth.cancel();
+
+      const u1 = new SpeechSynthesisUtterance(en);
+      u1.lang = "en-US";
+      u1.rate = 0.9;
+
+      const u2 = new SpeechSynthesisUtterance(zh);
+      u2.lang = "zh-CN";
+      u2.rate = 0.9;
+
+      synth.speak(u1);
+      if (zh) synth.speak(u2);
+    }
+
+    function makeEl(tag, className, text) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text !== undefined) el.textContent = text;
+      return el;
+    }
+
+    function render() {
+      list.innerHTML = "";
+      const totalPages = Math.ceil(DATA.length / ITEMS_PER_PAGE);
+      const start = (page - 1) * ITEMS_PER_PAGE;
+      const items = DATA.slice(start, start + ITEMS_PER_PAGE);
+
+      pager.textContent = `Page ${page} / ${totalPages}`;
+      prevBtn.disabled = page === 1;
+      nextBtn.disabled = page === totalPages;
+
+      let lastSection = null;
+      let lastSub = null;
+
+      for (const item of items) {
+        if (item.section !== lastSection) {
+          list.appendChild(makeEl("div", "section", item.section));
+          lastSection = item.section;
+          lastSub = null;
+        }
+        if (item.subsection !== lastSub) {
+          list.appendChild(makeEl("div", "subsection", item.subsection));
+          lastSub = item.subsection;
+        }
+
+        const card = makeEl("div", "card");
+        const qRow = makeEl("div", "question");
+        const num = makeEl("div", "num", item.id + ".");
+        const qText = makeEl("div", "qtext");
+        qText.dataset.en = item.q;
+        qText.dataset.zh = item.q_zh;
+
+        const qEn = makeEl("div", "en", item.q);
+        const qZh = makeEl("div", "zh", item.q_zh);
+        qText.appendChild(qEn);
+        qText.appendChild(qZh);
+        if (item.starred) {
+          const badge = makeEl("span", "badge", "* 65/20");
+          qEn.appendChild(badge);
+        }
+
+        qRow.appendChild(num);
+        qRow.appendChild(qText);
+        card.appendChild(qRow);
+
+        const answers = makeEl("ul", "answers");
+        for (const ans of item.answers) {
+          const li = makeEl("li");
+          li.dataset.en = ans.en;
+          li.dataset.zh = ans.zh;
+          li.appendChild(makeEl("div", "en", ans.en));
+          li.appendChild(makeEl("div", "zh", ans.zh));
+          answers.appendChild(li);
+        }
+        card.appendChild(answers);
+
+        if (item.note_en || item.note_zh) {
+          const note = makeEl("div", "note");
+          if (item.note_en) note.appendChild(makeEl("div", "en", item.note_en));
+          if (item.note_zh) note.appendChild(makeEl("div", "zh", item.note_zh));
+          card.appendChild(note);
+        }
+
+        list.appendChild(card);
+      }
+    }
+
+    list.addEventListener("click", (e) => {
+      const target = e.target.closest("[data-en]");
+      if (!target) return;
+      speak(target.dataset.en, target.dataset.zh);
+    });
+
+    prevBtn.addEventListener("click", () => {
+      if (page > 1) {
+        page -= 1;
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      const totalPages = Math.ceil(DATA.length / ITEMS_PER_PAGE);
+      if (page < totalPages) {
+        page += 1;
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
