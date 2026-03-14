@@ -180,26 +180,6 @@
       background: #fff6e9;
       box-shadow: none;
     }
-    .ansExplain {
-      margin-top: 8px;
-      padding: 10px 10px;
-      border-radius: 12px;
-      border: 1px solid #ead1b8;
-      background: #fff6e9;
-    }
-    .ansExplainTitle {
-      font-size: 14px;
-      font-weight: 800;
-      margin: 0 0 6px;
-      color: #3b2f24;
-    }
-    .ansExplainZh {
-      font-size: 18px;
-      line-height: 1.55;
-      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC", "SimSun", sans-serif;
-      color: #2a2a2a;
-    }
-
     .ansLearnPanel {
       margin-top: 10px;
     }
@@ -2967,7 +2947,6 @@
 
     // v2 learning/explain state
     let expandedId = null;
-    let expandedAnsKey = null; // e.g. "12-0" (questionId-answerIndex)
     let expandedAnsLearnKey = null; // e.g. "12-0" (questionId-answerIndex)
 
     // ---------- Explain read (chunks) ----------
@@ -3029,26 +3008,7 @@
       return out;
     }
 
-    function answerNeedsExplain(en) {
-      const t = (en || "").trim();
-      if (!t) return false;
-      // Simple = single word/number-ish (incl. hyphen) like "Republic", "Twenty-seven (27)" is NOT simple.
-      if (/^[A-Za-z0-9-]+$/.test(t)) return false;
-      // If it has parentheses, brackets, or looks like a sentence, show explain.
-      if (/[()\[\].,:;!?“”"]/.test(t)) return true;
-      // If more than 2 words, show explain.
-      const words = t.split(/\s+/).filter(Boolean);
-      return words.length > 2;
-    }
-
-    function buildAnswerExplainZh(ansZh, ansEn) {
-      const zh = cleanZh(ansZh);
-      if (zh) return `意思是：${zh}`;
-      // fallback if no zh provided
-      const en = (ansEn || "").trim();
-      if (!en) return "";
-      return "意思是：这是一个可接受的回答";
-    }
+    // (Removed) separate "答案解释" feature: we only keep per-answer 学习/讲解.
 
     function buildAnswerLearn(item, ans, idx) {
       const enA = (ans.en || "").trim();
@@ -3357,15 +3317,7 @@
           learnBtn.dataset.idx = String(idx);
           top.appendChild(learnBtn);
 
-          // Keep old "答案解释" only when needed (non-simple answers)
-          if (answerNeedsExplain(ans.en)) {
-            const btn = makeEl("button", "ansExplainBtn", expandedAnsKey === key ? "收起解释" : "答案解释");
-            btn.dataset.action = "toggle-ans";
-            btn.dataset.key = key;
-            btn.dataset.id = String(item.id);
-            btn.dataset.idx = String(idx);
-            top.appendChild(btn);
-          }
+
 
           li.appendChild(top);
 
@@ -3373,12 +3325,6 @@
             li.appendChild(renderAnswerLearnPanel(item, ans, idx));
           }
 
-          if (expandedAnsKey === key && answerNeedsExplain(ans.en)) {
-            const box = makeEl("div", "ansExplain");
-            box.appendChild(makeEl("div", "ansExplainTitle", "答案解释"));
-            box.appendChild(makeEl("div", "ansExplainZh", buildAnswerExplainZh(ans.zh, ans.en)));
-            li.appendChild(box);
-          }
 
           answers.appendChild(li);
         });
@@ -3523,7 +3469,6 @@
         if (action === "toggle-learn") {
           stopAutoRead();
           stopExplainRead();
-          expandedAnsKey = null;
           expandedAnsLearnKey = null;
           expandedId = expandedId === id ? null : id;
           render();
@@ -3535,14 +3480,6 @@
           return;
         }
 
-        if (action === "toggle-ans") {
-          stopAutoRead();
-          stopExplainRead();
-          const key = actionEl.dataset.key;
-          expandedAnsKey = expandedAnsKey === key ? null : key;
-          render();
-          return;
-        }
 
         if (action === "toggle-ans-learn") {
           stopAutoRead();
