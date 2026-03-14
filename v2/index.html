@@ -3010,21 +3010,85 @@
 
     // (Removed) separate "答案解释" feature: we only keep per-answer 学习/讲解.
 
+    function shortenZh(s, max = 16) {
+      const t = cleanZh(s);
+      if (!t) return "";
+      return t.length > max ? t.slice(0, max) + "…" : t;
+    }
+
+    function splitZhParts(zh) {
+      const t = cleanZh(zh);
+      if (!t) return { head: "", rest: "" };
+      // split at common delimiters for a short "keyword" + remainder
+      const m = t.split(/（|\(|，|、|。|；|:|：/);
+      const head = (m[0] || "").trim();
+      const rest = t.slice(head.length).replace(/^[\s，、。；:：]+/, "").trim();
+      return { head, rest };
+    }
+
+    function splitEnAnswer(en) {
+      const t = (en || "").trim();
+      if (!t) return { head: "", rest: "" };
+      // If has parentheses, treat as head + note
+      const pm = t.match(/^(.*?)(\s*\(([^)]+)\)\s*)$/);
+      if (pm) {
+        return { head: pm[1].trim(), rest: `(${pm[3]})` };
+      }
+      // Split by sentence-ish punctuation first
+      const p = t.split(/[.;!?]/).map((x) => x.trim()).filter(Boolean);
+      if (p.length > 1) {
+        return { head: p[0], rest: p.slice(1).join(". ") };
+      }
+      // Otherwise take first 3-5 words as a "phrase" head
+      const words = t.split(/\s+/).filter(Boolean);
+      if (words.length <= 4) return { head: t, rest: "" };
+      return { head: words.slice(0, 4).join(" "), rest: words.slice(4).join(" ") };
+    }
+
     function buildAnswerLearn(item, ans, idx) {
       const enA = (ans.en || "").trim();
       const zhA = (ans.zh || "").trim();
-      const summary = zhA ? `这个答案的意思是：${cleanZh(zhA)}。` : "这个答案的意思是：一个可接受的回答。";
 
-      // Keep chunking simple and readable.
+      const summary = zhA
+        ? `这个答案的意思是：${shortenZh(zhA, 22)}。`
+        : "这个答案的意思是：一个可接受的回答。";
+
       const chunks = [];
-      if (enA) chunks.push({ en: enA, zh: `这里指：${cleanZh(zhA) || "这句话的含义"}` });
 
-      // Add a gentle note for answers that are instructions/notes.
+      // Special cases: these are not "content" answers, they are instructions.
       if (/answers will vary/i.test(enA)) {
         chunks.push({ en: "Answers will vary", zh: "意思是：因人而异" });
+        return { summary, chunks };
       }
-      if (/visit\s+\S+/i.test(enA)) {
-        chunks.push({ en: "Visit …", zh: "意思是：去网站查询" });
+
+      const visit = enA.match(/\bvisit\s+(\S+)/i);
+      if (visit) {
+        chunks.push({ en: `Visit ${visit[1]}`, zh: "意思是：去这个网站查询" });
+        const forName = enA.match(/for the name of (.+)$/i);
+        if (forName) {
+          chunks.push({ en: `for the name of ${forName[1]}`.replace(/\.$/, ""), zh: "意思是：查“谁/哪个”的名字" });
+        }
+        return { summary, chunks };
+      }
+
+      const { head: zhHead, rest: zhRest } = splitZhParts(zhA);
+      const { head: enHead, rest: enRest } = splitEnAnswer(enA);
+
+      if (enHead) {
+        chunks.push({
+          en: enHead,
+          zh: zhHead ? `关键词：${shortenZh(zhHead, 14)}` : "关键词：记住这句核心说法",
+        });
+      }
+      if (enRest) {
+        chunks.push({
+          en: enRest,
+          zh: zhRest ? `补充说明：${shortenZh(zhRest, 18)}` : "补充说明：可能是限定/说明",
+        });
+      }
+      // If we still have no zh, keep a gentle hint (not a full copy).
+      if (!zhA && enA) {
+        chunks.push({ en: "(Tip)", zh: "提示：先整体记住，再慢慢拆词" });
       }
 
       return { summary, chunks };
@@ -3077,7 +3141,7 @@
 
     function buildLearn(item) {
       const zhQ = item.q_zh || "";
-      const summary = zhQ ? `这题在问：${cleanZh(zhQ)}？` : `这题在问：${item.q}`;
+      const summary = zhQ ? `这题在问：${shortenZh(zhQ, 26)}？` : `这题在问：${item.q}`;
 
       const enQ = (item.q || "").trim();
 
@@ -3161,30 +3225,60 @@
         chunks.push({ en: lead.lead, zh: lead.leadZh });
 
         if (rest) {
-          // Try split rest into up to ~4 chunks by common connectors.
-          const parts = [];
-          let r = rest;
-          const splits = [" of the ", " in the ", " for ", " from ", " between ", " about "]; 
-          for (const s of splits) {
-            if (parts.length >= 4) break;
-            const idx = r.toLowerCase().indexOf(s.trim());
-            // keep simple: don't over-split; only split once per connector
+          // Split the rest into a few meaning blocks.
+          // We explain connectors explicitly so non-English users can follow.
+          const connMap = [
+            { re: /\bof the\b/i, zh: "表示：……的" },
+            { re: /\bin the\b/i, zh: "表示：在……里" },
+            { re: /\bfrom\b/i, zh: "表示：从……" },
+            { re: /\bfor\b/i, zh: "表示：为了/用于……" },
+            { re: /\bbetween\b/i, zh: "表示：在……之间" },
+            { re: /\babout\b/i, zh: "表示：关于……" },
+            { re: /\bnow\b/i, zh: "表示：现在/现任" },
+          ];
+
+          // Tokenize by connectors (keep connector words as their own chunks).
+          let remaining = rest;
+          let safety = 0;
+          while (remaining && safety++ < 12) {
+            let best = null;
+            for (const c of connMap) {
+              const m = remaining.match(c.re);
+              if (m) {
+                const idx = m.index;
+                if (idx !== undefined && (best === null || idx < best.idx)) {
+                  best = { idx, len: m[0].length, token: m[0], zh: c.zh };
+                }
+              }
+            }
+            if (!best) {
+              chunks.push({
+                en: remaining.trim(),
+                zh: coreZh ? `这里指：${shortenZh(coreZh, 22)}` : "这里指：题目核心内容",
+              });
+              break;
+            }
+
+            const before = remaining.slice(0, best.idx).trim();
+            if (before) {
+              chunks.push({
+                en: before,
+                zh: coreZh ? `这里指：${shortenZh(coreZh, 22)}` : "这里指：题目核心内容",
+              });
+            }
+            chunks.push({ en: best.token, zh: best.zh });
+            remaining = remaining.slice(best.idx + best.len).trim();
           }
 
-          // Minimal: just one core chunk.
-          chunks.push({
-            en: rest,
-            zh: coreZh ? `这里指：${cleanZh(coreZh)}` : "这里指：题目核心内容",
-          });
+          // If we only ended up with 1 chunk for the rest, it's fine (no filler).
         }
       } else {
         // Fallback
         chunks = [
-          { en: enQ || "(empty)", zh: zhQ ? `意思是：${cleanZh(zhQ)}` : "意思是：这道题的内容" },
+          { en: enQ || "(empty)", zh: zhQ ? `意思是：${shortenZh(zhQ, 26)}` : "意思是：这道题的内容" },
         ];
       }
 
-      // Keep it simple: fewer chunks are better than filler.
       return { summary, chunks };
     }
 
