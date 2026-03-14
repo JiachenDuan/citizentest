@@ -188,13 +188,22 @@
   <div class="app">
     <header>
       <h1>US Civics 128 Q&A</h1>
-      <div class="subtitle">English + 中文翻译。点击问题或答案即可朗读（英文 → 中文）。每页10题，共13页。</div>
+      <div class="subtitle">English + 中文翻译。点击问题或答案即可朗读（可切换：英文 / 英文→中文 / 中文）。每页10题，共13页。</div>
       <div class="hint">提示：标有 * 的为 65/20 特别题。</div>
     </header>
 
     <div class="controls">
       <div class="pager" id="pager"></div>
-      <div class="btns">
+
+      <div class="btns" style="gap:12px; flex-wrap:wrap;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted);">
+          朗读：
+          <select id="readMode" style="padding:8px 10px; border-radius:10px; border:1px solid var(--border); background:#fff; font-size:14px;">
+            <option value="en">English only</option>
+            <option value="both" selected>English → 中文</option>
+            <option value="zh">中文 only</option>
+          </select>
+        </label>
         <button id="prev">Prev</button>
         <button id="next">Next</button>
       </div>
@@ -2704,6 +2713,15 @@
     const pager = document.getElementById("pager");
     const prevBtn = document.getElementById("prev");
     const nextBtn = document.getElementById("next");
+    const readModeSel = document.getElementById("readMode");
+
+    let readMode = "both"; // 'en' | 'both' | 'zh'
+    if (readModeSel) {
+      readMode = readModeSel.value;
+      readModeSel.addEventListener("change", () => {
+        readMode = readModeSel.value;
+      });
+    }
 
     function normalizeItem(item) {
       let noteEn = "";
@@ -2738,16 +2756,46 @@
       const synth = window.speechSynthesis;
       synth.cancel();
 
-      const u1 = new SpeechSynthesisUtterance(en);
-      u1.lang = "en-US";
-      u1.rate = 0.9;
+      const enText = (en || "").trim();
+      const zhText = (zh || "").trim();
 
-      const u2 = new SpeechSynthesisUtterance(zh);
-      u2.lang = "zh-CN";
-      u2.rate = 0.9;
+      // Modes:
+      // - en: English only
+      // - both: English then Chinese (if available)
+      // - zh: Chinese only (falls back to English if no zh)
+      if (readMode === "zh") {
+        const t = zhText || enText;
+        if (!t) return;
+        const u = new SpeechSynthesisUtterance(t);
+        u.lang = zhText ? "zh-CN" : "en-US";
+        u.rate = 0.9;
+        synth.speak(u);
+        return;
+      }
 
-      synth.speak(u1);
-      if (zh) synth.speak(u2);
+      if (readMode === "en") {
+        if (!enText) return;
+        const u = new SpeechSynthesisUtterance(enText);
+        u.lang = "en-US";
+        u.rate = 0.9;
+        synth.speak(u);
+        return;
+      }
+
+      // both
+      if (!enText && !zhText) return;
+      if (enText) {
+        const u1 = new SpeechSynthesisUtterance(enText);
+        u1.lang = "en-US";
+        u1.rate = 0.9;
+        synth.speak(u1);
+      }
+      if (zhText) {
+        const u2 = new SpeechSynthesisUtterance(zhText);
+        u2.lang = "zh-CN";
+        u2.rate = 0.9;
+        synth.speak(u2);
+      }
     }
 
     function makeEl(tag, className, text) {
