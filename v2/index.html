@@ -175,6 +175,76 @@
       font-size: 14px;
       color: var(--muted);
     }
+
+    /* v2 learning/explain */
+    .learnbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin: 10px 0 6px;
+      padding-left: 38px;
+    }
+    .learnbtn {
+      padding: 10px 14px;
+      font-size: 16px;
+      border-radius: 12px;
+      border:  1px solid var(--border);
+      background: #fff;
+    }
+    .learnbtn.primary {
+      background: #fff3e3;
+      border-color: #ead1b8;
+    }
+    .learnpanel {
+      margin: 10px 0 12px 38px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid #ead1b8;
+      background: #fff6e9;
+    }
+    .learnTitle {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0 0 10px;
+      color: #3b2f24;
+    }
+    .chunks {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 10px 0 12px;
+    }
+    .chunk {
+      border: 1px solid #f0ddc8;
+      background: #fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+    .chunkEn {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .chunkZh {
+      font-size: 18px;
+      line-height: 1.5;
+      font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Heiti SC", "SimSun", sans-serif;
+      color: #2a2a2a;
+    }
+    .learnActions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .learnNote {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+
     @media (max-width: 720px) {
       .app { padding: 20px 14px 40px; }
       h1 { font-size: 24px; }
@@ -2852,8 +2922,232 @@
       return DATA.slice(start, start + ITEMS_PER_PAGE);
     }
 
+    // v2 learning/explain state
+    let expandedId = null;
+
+    // ---------- Explain read (chunks) ----------
+    const explain = {
+      active: false,
+      segments: [],
+      idx: 0,
+    };
+
+    function stopExplainRead() {
+      explain.active = false;
+      explain.segments = [];
+      explain.idx = 0;
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    }
+
+    function speakQueue(segments, onDone) {
+      if (!window.speechSynthesis) return;
+      const synth = window.speechSynthesis;
+      synth.cancel();
+
+      let i = 0;
+      function next() {
+        if (i >= segments.length) {
+          if (onDone) onDone();
+          return;
+        }
+        const seg = segments[i++];
+        if (!seg || !seg.text) {
+          next();
+          return;
+        }
+        const u = new SpeechSynthesisUtterance(seg.text);
+        u.lang = seg.lang || "en-US";
+        u.rate = seg.rate || 1.0;
+        u.onend = () => next();
+        u.onerror = () => next();
+        synth.speak(u);
+      }
+      next();
+    }
+
+    function cleanZh(s) {
+      return (s || "")
+        .replace(/^[\s\u3000]+/, "")
+        .replace(/[？?。！!]+$/g, "")
+        .trim();
+    }
+
+    function stripZhLead(zh, leadRegexList) {
+      let out = cleanZh(zh);
+      for (const re of leadRegexList) {
+        const next = out.replace(re, "").trim();
+        if (next !== out) {
+          out = next;
+          break;
+        }
+      }
+      return out;
+    }
+
+    function buildLearn(item) {
+      const zhQ = item.q_zh || "";
+      const summary = zhQ ? `这题在问：${cleanZh(zhQ)}？` : `这题在问：${item.q}`;
+
+      const enQ = (item.q || "").trim();
+
+      const patterns = [
+        {
+          re: /^What is\b/i,
+          lead: "What is",
+          leadZh: "表示：是什么",
+          zhStrip: [/^什么是/, /^（?美国）?的?政府形式是什么/],
+        },
+        {
+          re: /^What are\b/i,
+          lead: "What are",
+          leadZh: "表示：是什么（复数）",
+          zhStrip: [/^什么是/, /^什么是.*？?$/],
+        },
+        {
+          re: /^How many\b/i,
+          lead: "How many",
+          leadZh: "表示：有多少",
+          zhStrip: [/^有多少/, /^多少/],
+        },
+        {
+          re: /^How long\b/i,
+          lead: "How long",
+          leadZh: "表示：多长（多久/多少年）",
+          zhStrip: [/^多长/, /^多少年/, /^任期多少年/],
+        },
+        {
+          re: /^Who\b/i,
+          lead: "Who",
+          leadZh: "表示：谁",
+          zhStrip: [/^谁/],
+        },
+        {
+          re: /^When\b/i,
+          lead: "When",
+          leadZh: "表示：什么时候",
+          zhStrip: [/^(何时|什么时候|何年|哪一年)/],
+        },
+        {
+          re: /^Where\b/i,
+          lead: "Where",
+          leadZh: "表示：在哪里",
+          zhStrip: [/^在哪里/],
+        },
+        {
+          re: /^Why\b/i,
+          lead: "Why",
+          leadZh: "表示：为什么",
+          zhStrip: [/^为什么/],
+        },
+        {
+          re: /^Name\b/i,
+          lead: "Name",
+          leadZh: "表示：说出/列举",
+          zhStrip: [/^说出/, /^列出/],
+        },
+        {
+          re: /^Describe\b/i,
+          lead: "Describe",
+          leadZh: "表示：描述",
+          zhStrip: [/^描述/],
+        },
+      ];
+
+      let lead = null;
+      for (const p of patterns) {
+        if (p.re.test(enQ)) {
+          lead = p;
+          break;
+        }
+      }
+
+      // Chunking: keep it simple and stable for seniors.
+      let chunks = [];
+      if (lead) {
+        const rest = enQ.replace(lead.re, "").trim();
+        const coreZh = zhQ ? stripZhLead(zhQ, lead.zhStrip) : "";
+
+        chunks.push({ en: lead.lead, zh: lead.leadZh });
+
+        if (rest) {
+          // Try split rest into up to ~4 chunks by common connectors.
+          const parts = [];
+          let r = rest;
+          const splits = [" of the ", " in the ", " for ", " from ", " between ", " about "]; 
+          for (const s of splits) {
+            if (parts.length >= 4) break;
+            const idx = r.toLowerCase().indexOf(s.trim());
+            // keep simple: don't over-split; only split once per connector
+          }
+
+          // Minimal: just one core chunk.
+          chunks.push({
+            en: rest,
+            zh: coreZh ? `这里指：${cleanZh(coreZh)}` : "这里指：题目核心内容",
+          });
+        }
+      } else {
+        // Fallback
+        chunks = [
+          { en: enQ || "(empty)", zh: zhQ ? `意思是：${cleanZh(zhQ)}` : "意思是：这道题的内容" },
+        ];
+      }
+
+      // Ensure 3–6 chunks: if too few, add an extra guidance chunk.
+      if (chunks.length === 2) {
+        chunks.push({ en: "(Focus)", zh: "重点：抓住关键词" });
+      }
+
+      return { summary, chunks };
+    }
+
+    function renderLearnPanel(item) {
+      const learn = buildLearn(item);
+
+      const panel = makeEl("div", "learnpanel");
+      panel.dataset.learnPanel = String(item.id);
+
+      panel.appendChild(makeEl("div", "learnTitle", learn.summary));
+
+      const chunkWrap = makeEl("div", "chunks");
+      for (const ch of learn.chunks) {
+        const row = makeEl("div", "chunk");
+        row.appendChild(makeEl("div", "chunkEn", ch.en));
+        row.appendChild(makeEl("div", "chunkZh", ch.zh));
+        chunkWrap.appendChild(row);
+      }
+      panel.appendChild(chunkWrap);
+
+      const actions = makeEl("div", "learnActions");
+      const play = makeEl("button", "learnbtn", "按块朗读（英文→中文）");
+      play.dataset.action = "play-chunks";
+      play.dataset.id = String(item.id);
+      actions.appendChild(play);
+
+      const stop = makeEl("button", "learnbtn", "停止");
+      stop.dataset.action = "stop-chunks";
+      stop.dataset.id = String(item.id);
+      actions.appendChild(stop);
+
+      panel.appendChild(actions);
+      panel.appendChild(makeEl("div", "learnNote", "提示：先听英文，再听中文解释（不用懂语法）。"));
+
+      return panel;
+    }
+
+    function playChunksFor(item) {
+      const learn = buildLearn(item);
+      const segs = [];
+      for (const ch of learn.chunks) {
+        if (ch.en && !/^\(.*\)$/.test(ch.en)) segs.push({ text: ch.en, lang: "en-US", rate: enRate });
+        if (ch.zh) segs.push({ text: ch.zh, lang: "zh-CN", rate: 0.95 });
+      }
+      speakQueue(segs);
+    }
+
     function render() {
       stopAutoRead();
+      stopExplainRead();
 
       list.innerHTML = "";
       const totalPages = Math.ceil(DATA.length / ITEMS_PER_PAGE);
@@ -2896,6 +3190,23 @@
         qRow.appendChild(num);
         qRow.appendChild(qText);
         card.appendChild(qRow);
+
+        // v2: learning/explain (collapsed by default)
+        const learnbar = makeEl("div", "learnbar");
+        const learnBtn = makeEl("button", "learnbtn primary", expandedId === item.id ? "收起讲解" : "学习/讲解");
+        learnBtn.dataset.action = "toggle-learn";
+        learnBtn.dataset.id = String(item.id);
+        learnbar.appendChild(learnBtn);
+        const learnHint = makeEl("span", "learnNote", "点开看分段解释（适合零基础）");
+        learnHint.style.marginTop = "0";
+        learnHint.style.marginLeft = "4px";
+        learnbar.appendChild(learnHint);
+        card.appendChild(learnbar);
+
+        if (expandedId === item.id) {
+          const panel = renderLearnPanel(item);
+          card.appendChild(panel);
+        }
 
         const answers = makeEl("ul", "answers");
         for (const ans of item.answers) {
@@ -3036,9 +3347,44 @@
     if (playPageBtn) playPageBtn.addEventListener("click", () => startAutoRead());
     if (stopPageBtn) stopPageBtn.addEventListener("click", () => stopAutoRead());
 
-    // Click-to-speak (single item)
+    // Click handling (learning buttons + click-to-speak)
     list.addEventListener("click", (e) => {
+      const actionEl = e.target.closest("[data-action]");
+      if (actionEl) {
+        const action = actionEl.dataset.action;
+        const id = parseInt(actionEl.dataset.id || "", 10);
+        const item = DATA.find((x) => x.id === id);
+
+        if (action === "toggle-learn") {
+          stopAutoRead();
+          stopExplainRead();
+          expandedId = expandedId === id ? null : id;
+          render();
+          // bring panel into view for seniors
+          setTimeout(() => {
+            const panel = list.querySelector(`[data-learn-panel='${id}']`);
+            if (panel) panel.scrollIntoView({ behavior: "smooth", block: "center" });
+          }, 0);
+          return;
+        }
+
+        if (action === "play-chunks" && item) {
+          stopAutoRead();
+          stopExplainRead();
+          playChunksFor(item);
+          return;
+        }
+
+        if (action === "stop-chunks") {
+          stopAutoRead();
+          stopExplainRead();
+          return;
+        }
+      }
+
+      // default: click-to-speak (single item)
       stopAutoRead();
+      stopExplainRead();
       const target = e.target.closest("[data-en]");
       if (!target) return;
       speak(target.dataset.en, target.dataset.zh);
