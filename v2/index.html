@@ -3143,7 +3143,8 @@
       const zhQ = item.q_zh || "";
       const summary = zhQ ? `这题在问：${shortenZh(zhQ, 26)}？` : `这题在问：${item.q}`;
 
-      const enQ = (item.q || "").trim();
+      const enQRaw = (item.q || "").trim();
+      const enQ = enQRaw.replace(/[?？]+$/g, "").trim();
 
       const patterns = [
         {
@@ -3216,61 +3217,75 @@
         }
       }
 
-      // Chunking: keep it simple and stable for seniors.
+      // Chunking: explain roles (问法/关键词/限定条件) instead of direct translation.
       let chunks = [];
       if (lead) {
         const rest = enQ.replace(lead.re, "").trim();
         const coreZh = zhQ ? stripZhLead(zhQ, lead.zhStrip) : "";
 
-        chunks.push({ en: lead.lead, zh: lead.leadZh });
+        // 1) Question frame
+        chunks.push({
+          en: lead.lead + " … ?",
+          zh: lead.leadZh.replace(/^表示：/, "这是在问："),
+        });
 
+        // 2) Break the rest by a few common, senior-friendly patterns.
         if (rest) {
-          // Split the rest into a few meaning blocks.
-          // We explain connectors explicitly so non-English users can follow.
-          const connMap = [
-            { re: /\bof the\b/i, zh: "表示：……的" },
-            { re: /\bin the\b/i, zh: "表示：在……里" },
-            { re: /\bfrom\b/i, zh: "表示：从……" },
-            { re: /\bfor\b/i, zh: "表示：为了/用于……" },
-            { re: /\bbetween\b/i, zh: "表示：在……之间" },
-            { re: /\babout\b/i, zh: "表示：关于……" },
-            { re: /\bnow\b/i, zh: "表示：现在/现任" },
+          let r = rest;
+
+          // phrase-level patterns (keep these as explicit, because they are common in civics)
+          const phraseMap = [
+            { re: /\bof the land\b/i, en: "of the land", zh: "限定范围：这个国家的" },
+            { re: /\bin the United States\b/i, en: "in the United States", zh: "限定范围：在美国" },
+            { re: /\bof the United States\b/i, en: "of the United States", zh: "限定范围：美国的" },
+            { re: /\bof the Constitution\b/i, en: "of the Constitution", zh: "限定范围：宪法的" },
+            { re: /\bnow\b/i, en: "now", zh: "时间提示：现在/现任" },
           ];
 
-          // Tokenize by connectors (keep connector words as their own chunks).
-          let remaining = rest;
-          let safety = 0;
-          while (remaining && safety++ < 12) {
+          // find earliest phrase occurrence
+          function findEarliestPhrase(text) {
             let best = null;
-            for (const c of connMap) {
-              const m = remaining.match(c.re);
-              if (m) {
-                const idx = m.index;
-                if (idx !== undefined && (best === null || idx < best.idx)) {
-                  best = { idx, len: m[0].length, token: m[0], zh: c.zh };
-                }
+            for (const p of phraseMap) {
+              const m = text.match(p.re);
+              if (m && m.index !== undefined) {
+                if (!best || m.index < best.idx) best = { ...p, idx: m.index, len: m[0].length };
               }
             }
+            return best;
+          }
+
+          let safety = 0;
+          while (r && safety++ < 8) {
+            const best = findEarliestPhrase(r);
             if (!best) {
-              chunks.push({
-                en: remaining.trim(),
-                zh: coreZh ? `这里指：${shortenZh(coreZh, 22)}` : "这里指：题目核心内容",
-              });
+              const kw = r.trim();
+              if (kw) {
+                chunks.push({
+                  en: kw,
+                  zh: coreZh ? `关键词：${shortenZh(coreZh, 22)}` : "关键词：题目核心对象",
+                });
+              }
               break;
             }
 
-            const before = remaining.slice(0, best.idx).trim();
+            const before = r.slice(0, best.idx).trim();
             if (before) {
               chunks.push({
                 en: before,
-                zh: coreZh ? `这里指：${shortenZh(coreZh, 22)}` : "这里指：题目核心内容",
+                zh: coreZh ? `关键词：${shortenZh(coreZh, 22)}` : "关键词：题目核心对象",
               });
             }
-            chunks.push({ en: best.token, zh: best.zh });
-            remaining = remaining.slice(best.idx + best.len).trim();
-          }
 
-          // If we only ended up with 1 chunk for the rest, it's fine (no filler).
+            chunks.push({ en: best.en, zh: best.zh });
+            r = r.slice(best.idx + best.len).trim();
+          }
+        }
+
+        // 3) Stitching hint (super important for non-English learners)
+        if (zhQ) {
+          chunks.push({ en: "(Put together)", zh: `所以整句意思是：${shortenZh(zhQ, 28)}` });
+        } else {
+          chunks.push({ en: "(Put together)", zh: "所以整句意思是：问一个定义/名称" });
         }
       } else {
         // Fallback
